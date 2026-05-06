@@ -398,8 +398,9 @@
           if(m.type === 'big'){
             const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
             const owners = { ...(current.soldOwners || {}) };
+            const soldNumbers = Array.from(new Set([...(current.soldNumbers || []), m.number]));
             owners[m.number] = { ...(owners[m.number] || {}), status:'paid' };
-            updates[m.raffleId] = { ...current, soldOwners: owners };
+            updates[m.raffleId] = { ...current, soldNumbers, soldOwners: owners };
           }
 
           if(m.type === 'mini'){
@@ -416,6 +417,7 @@
 
         Object.entries(updates).forEach(([raffleId, updated])=>{
           tx.update(raffleDocs[raffleId].ref, {
+            soldNumbers: updated.soldNumbers || [],
             soldOwners: updated.soldOwners || {},
             miniRaffles: updated.miniRaffles || []
           });
