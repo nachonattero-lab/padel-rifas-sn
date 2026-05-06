@@ -344,7 +344,10 @@
       const contact=(byId('buyerContact').value||'').trim();
       const orderId = await reserveNumbersTransaction(name, contact);
       const orderSnap = await getDoc(doc(db,'orders',orderId));
-      cart=[]; byId('buyerName').value=''; byId('buyerContact').value='';
+      cart=[];
+      renderCart();
+      renderRaffles();
+      byId('buyerName').value=''; byId('buyerContact').value='';
       closeModal('buyerModal'); closeModal('cartModal');
       showPaymentScreen({id:orderId, ...orderSnap.data()});
       openModal('paymentModal');
@@ -560,7 +563,12 @@
 
         tx.update(orderRef,{status:'paid',paidAt:serverTimestamp()});
       });
-      alert('Reserva marcada como pagada');
+      cart=[];
+      renderCart();
+      renderRaffles();
+      closeModal('cartModal');
+      closeModal('paymentModal');
+      alert('Reserva marcada como pagada y carrito limpiado');
     }
     async function deleteOrder(id){
       if(!isAdmin) return alert('Solo admin.');
