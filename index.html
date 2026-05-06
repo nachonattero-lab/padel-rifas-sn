@@ -47,7 +47,7 @@
   <div class="modal" id="adminModal"><div class="modalBox"><div class="modalHead"><h3>Panel de usuario privilegiado</h3><button class="close" onclick="closeModal('adminModal')">×</button></div><div class="modalContent"><div class="tabs"><button class="tab active" onclick="setAdminTab('general',this)">General</button><button class="tab" onclick="setAdminTab('footerAdmin',this)">Footer</button><button class="tab" onclick="setAdminTab('rifasAdmin',this)">Rifas</button><button class="tab" onclick="setAdminTab('winnerAdmin',this)">Ganador rifa</button><button class="tab" onclick="setAdminTab('miniAdmin',this)">Mini rifas</button><button class="tab" onclick="setAdminTab('tiendaAdmin',this)">Tienda</button><button class="tab" onclick="setAdminTab('paymentsAdmin',this)">Pagos</button><button class="tab" onclick="setAdminTab('ganadoresAdmin',this)">Ganadores</button></div>
     <div class="adminPanel active" id="general"><div class="formGrid"><div><label>Nombre marca</label><input class="input" id="adminBrand"></div><div><label>Badge hero</label><input class="input" id="adminBadge"></div><div><label>Estadística 1</label><input class="input" id="adminStat1"></div><div><label>Estadística 2</label><input class="input" id="adminStat2"></div><div><label>Estadística 3</label><input class="input" id="adminStat3"></div><div><label>Imagen hero URL</label><input class="input" id="adminHeroImg"></div></div><label>Título hero</label><textarea id="adminHeroTitle"></textarea><label>Texto hero</label><textarea id="adminHeroText"></textarea><button class="btn primary" onclick="saveGeneral()">Guardar cambios</button></div>
     <div class="adminPanel" id="footerAdmin"><p class="muted">Editá todo lo que aparece abajo del todo en la página.</p><div class="formGrid"><div><label>Marca footer</label><input class="input" id="adminFooterBrand"></div><div><label>Título enlaces</label><input class="input" id="adminFooterLinksTitle"></div><div><label>Título legal</label><input class="input" id="adminFooterLegalTitle"></div><div><label>Título contacto</label><input class="input" id="adminFooterContactTitle"></div></div><label>Descripción</label><textarea id="adminFooterDescription"></textarea><label>Enlaces, uno por línea</label><textarea id="adminFooterLinks"></textarea><label>Legal, uno por línea</label><textarea id="adminFooterLegal"></textarea><label>Contacto, uno por línea</label><textarea id="adminFooterContact"></textarea><label>Copyright</label><input class="input" id="adminFooterCopyright"><button class="btn primary" onclick="saveFooter()">Guardar footer</button></div>
-    <div class="adminPanel" id="rifasAdmin"><div class="formGrid"><div><label>Nombre rifa</label><input class="input" id="raffleName"></div><div><label>Precio número grande en pesos</label><input class="input" id="rafflePrice" type="number"></div><div><label>Lotería</label><input class="input" id="raffleLottery"></div><div><label>Imagen URL</label><input class="input" id="raffleImg"></div></div><label>Descripción</label><textarea id="raffleDesc"></textarea><button class="btn primary" onclick="addRaffle()">Agregar rifa grande</button><div class="adminList" id="raffleList"></div></div>
+    <div class="adminPanel" id="rifasAdmin"><div class="formGrid"><div><label>Nombre rifa</label><input class="input" id="raffleName"></div><div><label>Precio 1 número</label><input class="input" id="rafflePrice" type="number"></div><div><label>Precio por número (comprando 2)</label><input class="input" id="rafflePrice2" type="number"></div><div><label>Precio por número (comprando 3)</label><input class="input" id="rafflePrice3" type="number"></div><div><label>Precio por número (comprando 4 o más)</label><input class="input" id="rafflePrice4" type="number"></div><div><label>Lotería</label><input class="input" id="raffleLottery"></div><div><label>Imagen URL</label><input class="input" id="raffleImg"></div></div><label>Descripción</label><textarea id="raffleDesc"></textarea><button class="btn primary" onclick="addRaffle()">Agregar rifa grande</button><div class="adminList" id="raffleList"></div></div>
     <div class="adminPanel" id="winnerAdmin"><p class="muted">Sistema simple para marcar el ganador de una rifa grande y adjuntar una imagen comprobante del sorteo.</p><div class="formGrid"><div><label>Rifa</label><select id="winnerRaffleSelect" class="input" onchange="loadWinnerForm()"></select></div><div><label>Número ganador</label><select id="winnerNumberSelect" class="input"></select></div><div><label>Nombre del ganador</label><input class="input" id="winnerPersonName" placeholder="Ej: Juan Pérez"></div><div><label>Contacto del ganador</label><input class="input" id="winnerPersonContact" placeholder="Ej: @juanperez / WhatsApp"></div></div><label>Imagen comprobante del sorteo</label><input class="input" id="winnerProofImage" placeholder="Pegá URL de la imagen comprobante"><label>Detalle / aclaración</label><textarea id="winnerProofText" placeholder="Ej: Sorteo realizado por Lotería Nacional, fecha, número ganador, etc."></textarea><button class="btn primary" onclick="saveRaffleWinner()">Guardar ganador</button><button class="btn danger" onclick="clearRaffleWinner()" style="margin-left:8px">Borrar ganador</button><div class="adminList" id="winnerAdminPreview" style="margin-top:16px"></div></div>
     <div class="adminPanel" id="miniAdmin"><p class="muted">Creá mini rifas dentro de una rifa grande. Cada mini va del 0 al 9 y el ganador elige 10 números de la rifa grande.</p><div class="formGrid"><div><label>Rifa grande</label><select id="miniParent" class="input"></select></div><div><label>Nombre mini rifa</label><input class="input" id="miniName"></div><div><label>Precio mini número en pesos</label><input class="input" id="miniPrice" type="number"></div><div><label>Lotería mini rifa</label><input class="input" id="miniLottery"></div></div><button class="btn primary" onclick="addMiniRaffle()">Crear mini rifa</button><div class="adminList" id="miniList"></div></div>
     <div class="adminPanel" id="tiendaAdmin"><div class="formGrid"><div><label>Producto</label><input class="input" id="prodName"></div><div><label>Precio en pesos</label><input class="input" id="prodPrice" type="number"></div><div><label>Categoría</label><input class="input" id="prodTag"></div><div><label>Imagen URL</label><input class="input" id="prodImg"></div></div><button class="btn primary" onclick="addProduct()">Agregar producto</button><div class="adminList" id="productList"></div></div>
@@ -145,6 +145,39 @@
     const settingsRef = doc(db, 'settings', 'site');
     const money = value => new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(Number(value||0));
     const ownerText = owner => owner ? `${owner.status==='pending'?'Reservado por':'Dueño'}: ${owner.name}${owner.contact?' · '+owner.contact:''}` : 'Dueño no registrado';
+
+    function getUnitPriceForQuantity(baseRaffle, quantity){
+      if(quantity >= 4) return Number(baseRaffle.price4 || baseRaffle.price3 || baseRaffle.price2 || baseRaffle.price);
+      if(quantity === 3) return Number(baseRaffle.price3 || baseRaffle.price2 || baseRaffle.price);
+      if(quantity === 2) return Number(baseRaffle.price2 || baseRaffle.price);
+      return Number(baseRaffle.price || 0);
+    }
+
+    function getCalculatedCart(){
+      const raffleCounts = {};
+
+      cart.forEach(item => {
+        if(item.meta?.type === 'big'){
+          raffleCounts[item.meta.raffleId] = (raffleCounts[item.meta.raffleId] || 0) + 1;
+        }
+      });
+
+      return cart.map(item => {
+        if(item.meta?.type !== 'big') return item;
+
+        const raffle = raffles.find(r => r.id === item.meta.raffleId);
+        if(!raffle) return item;
+
+        const quantity = raffleCounts[item.meta.raffleId] || 1;
+        const calculatedPrice = getUnitPriceForQuantity(raffle, quantity);
+
+        return {
+          ...item,
+          price: calculatedPrice,
+          quantityPack: quantity
+        };
+      });
+    }
     const byId = id => document.getElementById(id);
 
     function openModal(id){ byId(id).classList.add('open'); }
@@ -293,7 +326,7 @@
           const claimButton=(currentUser&&m.winner&&m.winner.userId===currentUser.uid&&!m.winner.claimed)?`<button class="btn primary" onclick="openMiniWinnerClaim('${r.id}','${m.id}')">Elegir mis 10 números</button>`:'';const claimedText=(m.winner&&m.winner.claimedNumbers&&m.winner.claimedNumbers.length)?`<p><strong>Números elegidos:</strong> ${m.winner.claimedNumbers.map(x=>String(x).padStart(2,'0')).join(', ')}</p>`:'';const miniWinnerBlock=m.winner?`<div class="winnerProof"><h4>🏆 Ganador mini rifa</h4><p><strong>Número:</strong> ${m.winner.number}</p><p><strong>Ganador:</strong> ${m.winner.name||'Sin nombre'} ${m.winner.contact?'· '+m.winner.contact:''}</p><p class="muted">${m.winner.detail||'Ganador cargado por el administrador.'}</p>${claimedText}${m.winner.proofImage?`<img src="${m.winner.proofImage}" alt="Comprobante mini rifa">`:''}${claimButton}</div>`:'';return `<div class="miniBox"><div class="miniTitle"><h4>${m.name}</h4><span class="miniBadge">0-9</span></div><p class="muted">${m.lottery} · ${money(m.price)} por número · premio: elegir 10 números de la rifa grande</p>${miniWinnerBlock}<div class="miniNums">${miniNums}</div><button class="btn secondary" onclick="simulateMiniWinner('${r.id}')">Asignar premio mini</button></div>`;
         }).join(String.fromCharCode(10));
         const winnerBlock=r.winner?`<div class="winnerProof"><h4>🏆 Ganador confirmado</h4><p><strong>Número:</strong> ${String(r.winner.number).padStart(2,'0')}</p><p><strong>Ganador:</strong> ${r.winner.name||'Sin nombre'} ${r.winner.contact?'· '+r.winner.contact:''}</p><p class="muted">${r.winner.detail||'Comprobante adjunto por el administrador.'}</p>${r.winner.proofImage?`<img src="${r.winner.proofImage}" alt="Comprobante del sorteo">`:''}</div>`:'';
-        return `<article class="card"><img src="${r.img}" alt="${r.name}"><div class="cardBody"><h3>${r.name}</h3><p class="muted">${r.desc}</p><div class="price">${money(r.price)} / número</div><p class="muted">${r.lottery}</p><div class="progress"><div class="bar" style="width:${pctSold(r)}%"></div></div><p class="muted">${(r.soldNumbers||[]).length}/100 números vendidos</p>${winnerBlock}<div class="numberBox">${nums}</div><button class="btn primary" onclick="addRandomBig('${r.id}')">Elegir número automático</button>${minis}</div></article>`;
+        return `<article class="card"><img src="${r.img}" alt="${r.name}"><div class="cardBody"><h3>${r.name}</h3><p class="muted">${r.desc}</p><div class="price">${money(r.price)} / número</div><p class="muted">2 números: ${money(r.price2 || r.price)} c/u · 3 números: ${money(r.price3 || r.price2 || r.price)} c/u · 4 o más: ${money(r.price4 || r.price3 || r.price2 || r.price)} c/u</p><p class="muted">${r.lottery}</p><div class="progress"><div class="bar" style="width:${pctSold(r)}%"></div></div><p class="muted">${(r.soldNumbers||[]).length}/100 números vendidos</p>${winnerBlock}<div class="numberBox">${nums}</div><button class="btn primary" onclick="addRandomBig('${r.id}')">Elegir número automático</button>${minis}</div></article>`;
       }).join(String.fromCharCode(10));
     }
 
@@ -338,7 +371,28 @@
       }
       renderCart();
     }
-    function renderCart(){ byId('cartCount').textContent=cart.length; byId('cartItems').innerHTML=cart.length?cart.map((c,i)=>`<div class="adminItem"><span>${c.name}</span><strong>${money(c.price)}</strong><button class="tab danger" onclick="removeCartItem(${i})">Quitar</button></div>`).join(String.fromCharCode(10)):'<p class="muted">Todavía no agregaste nada.</p>'; byId('subtotal').textContent=money(cart.reduce((a,b)=>a+Number(b.price),0)); }
+    function renderCart(){
+      const calculatedCart = getCalculatedCart();
+
+      byId('cartCount').textContent = calculatedCart.length;
+
+      byId('cartItems').innerHTML = calculatedCart.length
+        ? calculatedCart.map((c,i)=>`
+          <div class="adminItem">
+            <span>
+              ${c.name}
+              ${c.meta?.type==='big' && c.quantityPack > 1 ? `<small class="muted"> · pack x${c.quantityPack}</small>` : ''}
+            </span>
+            <strong>${money(c.price)}</strong>
+            <button class="tab danger" onclick="removeCartItem(${i})">Quitar</button>
+          </div>
+        `).join(String.fromCharCode(10))
+        : '<p class="muted">Todavía no agregaste nada.</p>';
+
+      byId('subtotal').textContent = money(
+        calculatedCart.reduce((a,b)=>a+Number(b.price),0)
+      );
+    }
     function removeCartItem(i){ cart.splice(i,1); renderCart(); renderRaffles(); }
     function checkout(){ if(!cart.length) return alert('El carrito está vacío'); openModal('buyerModal'); }
 
@@ -358,7 +412,8 @@
 
     async function reserveNumbersTransaction(name, contact){
       const orderRef = doc(collection(db,'orders'));
-      const total = cart.reduce((a,b)=>a+Number(b.price),0);
+      const calculatedCart = getCalculatedCart();
+      const total = calculatedCart.reduce((a,b)=>a+Number(b.price),0);
 
       await runTransaction(db, async tx => {
         const raffleIds = [...new Set(cart
@@ -454,7 +509,7 @@
           contact,
           userId: currentUser?.uid || null,
           status:'pending',
-          items:cart,
+          items:calculatedCart,
           total,
           createdAt:serverTimestamp(),
           createdAtMs:Date.now()
@@ -653,7 +708,39 @@
     async function saveRaffleWinner(){ if(!isAdmin) return alert('Solo admin.'); const id=byId('winnerRaffleSelect').value; const n=Number(byId('winnerNumberSelect').value); const r=raffles.find(x=>x.id===id); const owners={...(r.soldOwners||{}), [n]:{name:byId('winnerPersonName').value||'Ganador sin nombre',contact:byId('winnerPersonContact').value||'',status:'paid'}}; const nums=(r.soldNumbers||[]).includes(n)?r.soldNumbers:[...(r.soldNumbers||[]),n]; await updateDoc(doc(db,'raffles',id),{winner:{number:n,name:byId('winnerPersonName').value||'Ganador sin nombre',contact:byId('winnerPersonContact').value||'',proofImage:byId('winnerProofImage').value||'',detail:byId('winnerProofText').value||''},soldOwners:owners,soldNumbers:nums}); alert('Ganador guardado correctamente'); }
     async function clearRaffleWinner(){ if(!isAdmin) return alert('Solo admin.'); await updateDoc(doc(db,'raffles',byId('winnerRaffleSelect').value),{winner:null}); alert('Ganador borrado'); }
     async function saveGeneral(){ if(!isAdmin) return alert('Solo admin.'); await updateDoc(settingsRef,{brand:byId('adminBrand').value,badge:byId('adminBadge').value,heroTitle:byId('adminHeroTitle').value,heroText:byId('adminHeroText').value,stat1:byId('adminStat1').value,stat2:byId('adminStat2').value,stat3:byId('adminStat3').value,heroImage:byId('adminHeroImg').value}); alert('Cambios guardados'); }
-    async function addRaffle(){ if(!isAdmin) return alert('Solo admin.'); await addDoc(collection(db,'raffles'),{name:byId('raffleName').value||'Nueva rifa',price:Number(byId('rafflePrice').value||1000),lottery:byId('raffleLottery').value||'Lotería Nacional',img:byId('raffleImg').value||site.heroImage,desc:byId('raffleDesc').value||'Descripción de la rifa.',soldNumbers:[],soldOwners:{},miniRaffles:[],winner:null,createdAt:serverTimestamp()}); byId('raffleName').value=byId('rafflePrice').value=byId('raffleLottery').value=byId('raffleImg').value=byId('raffleDesc').value=''; }
+    async function addRaffle(){
+      if(!isAdmin) return alert('Solo admin.');
+
+      const p1 = Number(byId('rafflePrice').value || 1000);
+      const p2 = Number(byId('rafflePrice2').value || p1);
+      const p3 = Number(byId('rafflePrice3').value || p2);
+      const p4 = Number(byId('rafflePrice4').value || p3);
+
+      await addDoc(collection(db,'raffles'),{
+        name:byId('raffleName').value||'Nueva rifa',
+        price:p1,
+        price2:p2,
+        price3:p3,
+        price4:p4,
+        lottery:byId('raffleLottery').value||'Lotería Nacional',
+        img:byId('raffleImg').value||site.heroImage,
+        desc:byId('raffleDesc').value||'Descripción de la rifa.',
+        soldNumbers:[],
+        soldOwners:{},
+        miniRaffles:[],
+        winner:null,
+        createdAt:serverTimestamp()
+      });
+
+      byId('raffleName').value='';
+      byId('rafflePrice').value='';
+      byId('rafflePrice2').value='';
+      byId('rafflePrice3').value='';
+      byId('rafflePrice4').value='';
+      byId('raffleLottery').value='';
+      byId('raffleImg').value='';
+      byId('raffleDesc').value='';
+    }
     async function deleteRaffle(id){ if(!isAdmin) return alert('Solo admin.'); if(confirm('¿Eliminar rifa?')) await deleteDoc(doc(db,'raffles',id)); }
     async function addMiniRaffle(){ if(!isAdmin) return alert('Solo admin.'); const id=byId('miniParent').value; const r=raffles.find(x=>x.id===id); const minis=[...(r.miniRaffles||[]),{id:crypto.randomUUID(),name:byId('miniName').value||'Mini rifa',price:Number(byId('miniPrice').value||500),lottery:byId('miniLottery').value||'Lotería Mini',soldNumbers:[],soldOwners:{}}]; await updateDoc(doc(db,'raffles',id),{miniRaffles:minis}); byId('miniName').value=byId('miniPrice').value=byId('miniLottery').value=''; }
     async function assignMiniWinner(raffleId,miniId){
