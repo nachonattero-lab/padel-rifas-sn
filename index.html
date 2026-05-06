@@ -39,7 +39,7 @@
   
 
   <div class="modal" id="cartModal"><div class="modalBox"><div class="modalHead"><h3>Tu Carrito</h3><button class="close" onclick="closeModal('cartModal')">×</button></div><div class="modalContent"><div id="cartItems"></div><h3 style="margin-top:18px">Subtotal <span id="subtotal">$0</span></h3><button class="btn primary" style="margin-top:18px" onclick="checkout()">Finalizar compra</button></div></div></div>
-  <div class="modal" id="loginModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Bienvenido</h3><button class="close" onclick="closeModal('loginModal')">×</button></div><div class="modalContent"><label>Email</label><input class="input" id="loginEmail" placeholder="admin@padelrifassn.com"><label>Contraseña</label><input class="input" id="loginPass" type="password" placeholder="admin123"><button class="btn primary" onclick="login()">Entrar</button><button class="btn secondary" style="margin-left:8px" onclick="registerUser()">Crear cuenta</button><button class="btn danger" style="margin-top:10px" onclick="logoutUser()">Cerrar sesión</button><p class="muted" style="margin-top:15px;font-size:.9rem">Para admin real: creá el usuario en Firebase Auth y en Firestore poné users/UID con role: "admin".</p></div></div></div>
+  <div class="modal" id="loginModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Bienvenido</h3><button class="close" onclick="closeModal('loginModal')">×</button></div><div class="modalContent"><label>Email</label><input class="input" id="loginEmail" placeholder="admin@padelrifassn.com"><label>Contraseña</label><input class="input" id="loginPass" type="password" placeholder="admin123"><button class="btn primary" type="button" onclick="__loginClick()">Entrar</button><button class="btn secondary" type="button" style="margin-left:8px" onclick="__registerClick()">Crear cuenta</button><button class="btn danger" type="button" style="margin-top:10px" onclick="__logoutClick()">Cerrar sesión</button></div></div></div>
   <div class="modal" id="buyerModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Datos del comprador</h3><button class="close" onclick="closeModal('buyerModal')">×</button></div><div class="modalContent"><p class="muted">Los números quedarán reservados hasta que el admin confirme el pago.</p><label>Nombre del comprador</label><input class="input" id="buyerName" placeholder="Ej: Juan Pérez"><label>WhatsApp o Instagram</label><input class="input" id="buyerContact" placeholder="Ej: @juanperez o 11 1234-5678"><button class="btn primary" onclick="confirmCheckoutWithBuyer()">Generar reserva y ver pago</button></div></div></div>
   <div class="modal" id="paymentModal"><div class="modalBox"><div class="modalHead"><h3>Pago pendiente</h3><button class="close" onclick="closeModal('paymentModal')">×</button></div><div class="modalContent"><div id="paymentDetails"></div></div></div></div>
   <div class="modal" id="chooseNumbersModal"><div class="modalBox"><div class="modalHead"><h3>Elegí 10 números de la rifa grande</h3><button class="close" onclick="closeModal('chooseNumbersModal')">×</button></div><div class="modalContent"><p class="muted">Esto simula el premio de ganar una mini rifa. Seleccioná exactamente 10 números disponibles.</p><div class="numberBox" id="winnerPickBox"></div><button class="btn primary" onclick="confirmWinnerPick()">Confirmar 10 números</button></div></div></div>
@@ -74,6 +74,21 @@
       if(mode === 'logout' && window.__logoutReal) return window.__logoutReal();
 
       window.__openModalFallback('loginModal');
+    };
+
+    window.__loginClick = function(){
+      if(window.__loginReal) return window.__loginReal();
+      alert('Firebase todavía está cargando. Esperá unos segundos y volvé a intentar.');
+    };
+
+    window.__registerClick = function(){
+      if(window.__registerReal) return window.__registerReal();
+      alert('Firebase todavía está cargando. Esperá unos segundos y volvé a intentar.');
+    };
+
+    window.__logoutClick = function(){
+      if(window.__logoutReal) return window.__logoutReal();
+      alert('Todavía no hay una sesión cargada.');
     };
   </script>
 
@@ -173,7 +188,11 @@
       }catch(e){ alert('No se pudo crear la cuenta: ' + e.message); }
     }
 
-    async function logoutUser(){ await signOut(auth); alert('Sesión cerrada.'); }
+    async function logoutUser(){ await signOut(auth); closeModal('loginModal'); alert('Sesión cerrada.'); }
+
+    window.__loginReal = login;
+    window.__registerReal = registerUser;
+    window.__logoutReal = logoutUser;
 
     function render(){
       site.footer = site.footer || defaultSettings.footer;
