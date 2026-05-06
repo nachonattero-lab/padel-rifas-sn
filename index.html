@@ -229,11 +229,11 @@
       byId('footerBrand').textContent = f.brand || site.brand || 'PADEL RIFAS SN';
       byId('footerDescription').textContent = f.description || '';
       byId('footerLinksTitle').textContent = f.linksTitle || 'Enlaces';
-      byId('footerLinksList').innerHTML = (f.links || []).map(x=>`<li>${x}</li>`).join('');
+      byId('footerLinksList').innerHTML = (f.links || []).map(x=>`<li>${x}</li>`).join(String.fromCharCode(10));
       byId('footerLegalTitle').textContent = f.legalTitle || 'Legal';
-      byId('footerLegalList').innerHTML = (f.legal || []).map(x=>`<li>${x}</li>`).join('');
+      byId('footerLegalList').innerHTML = (f.legal || []).map(x=>`<li>${x}</li>`).join(String.fromCharCode(10));
       byId('footerContactTitle').textContent = f.contactTitle || 'Contacto';
-      byId('footerContactList').innerHTML = (f.contact || []).map(x=>`<li>${x}</li>`).join('');
+      byId('footerContactList').innerHTML = (f.contact || []).map(x=>`<li>${x}</li>`).join(String.fromCharCode(10));
       byId('footerCopyright').textContent = f.copyright || '';
     }
 
@@ -294,10 +294,10 @@
             miniNums+=`<button class="num ${status}" ${sold?'disabled':''} ${sold?`data-owner="${owner}" title="${owner}"`:''} onclick="selectMiniNumber('${r.id}','${m.id}',${n},event)">${n}</button>`;
           }
           return `<div class="miniBox"><div class="miniTitle"><h4>${m.name}</h4><span class="miniBadge">0-9</span></div><p class="muted">${m.lottery} · ${money(m.price)} por número · premio: elegir 10 números de la rifa grande</p><div class="miniNums">${miniNums}</div><button class="btn secondary" onclick="simulateMiniWinner('${r.id}')">Asignar premio mini</button></div>`;
-        }).join('');
+        }).join(String.fromCharCode(10));
         const winnerBlock=r.winner?`<div class="winnerProof"><h4>🏆 Ganador confirmado</h4><p><strong>Número:</strong> ${String(r.winner.number).padStart(2,'0')}</p><p><strong>Ganador:</strong> ${r.winner.name||'Sin nombre'} ${r.winner.contact?'· '+r.winner.contact:''}</p><p class="muted">${r.winner.detail||'Comprobante adjunto por el administrador.'}</p>${r.winner.proofImage?`<img src="${r.winner.proofImage}" alt="Comprobante del sorteo">`:''}</div>`:'';
         return `<article class="card"><img src="${r.img}" alt="${r.name}"><div class="cardBody"><h3>${r.name}</h3><p class="muted">${r.desc}</p><div class="price">${money(r.price)} / número</div><p class="muted">${r.lottery}</p><div class="progress"><div class="bar" style="width:${pctSold(r)}%"></div></div><p class="muted">${(r.soldNumbers||[]).length}/100 números vendidos</p>${winnerBlock}<div class="numberBox">${nums}</div><button class="btn primary" onclick="addRandomBig('${r.id}')">Elegir número automático</button>${minis}</div></article>`;
-      }).join('');
+      }).join(String.fromCharCode(10));
     }
 
     function selectBigNumber(raffleId,n,e){
@@ -341,7 +341,7 @@
       }
       renderCart();
     }
-    function renderCart(){ byId('cartCount').textContent=cart.length; byId('cartItems').innerHTML=cart.length?cart.map((c,i)=>`<div class="adminItem"><span>${c.name}</span><strong>${money(c.price)}</strong><button class="tab danger" onclick="removeCartItem(${i})">Quitar</button></div>`).join(''):'<p class="muted">Todavía no agregaste nada.</p>'; byId('subtotal').textContent=money(cart.reduce((a,b)=>a+Number(b.price),0)); }
+    function renderCart(){ byId('cartCount').textContent=cart.length; byId('cartItems').innerHTML=cart.length?cart.map((c,i)=>`<div class="adminItem"><span>${c.name}</span><strong>${money(c.price)}</strong><button class="tab danger" onclick="removeCartItem(${i})">Quitar</button></div>`).join(String.fromCharCode(10)):'<p class="muted">Todavía no agregaste nada.</p>'; byId('subtotal').textContent=money(cart.reduce((a,b)=>a+Number(b.price),0)); }
     function removeCartItem(i){ cart.splice(i,1); renderCart(); renderRaffles(); }
     function checkout(){ if(!cart.length) return alert('El carrito está vacío'); openModal('buyerModal'); }
 
@@ -467,10 +467,10 @@
     function showPaymentScreen(order){
       const pay=site.payment||defaultSettings.payment;
       const msg=encodeURIComponent(`Hola, soy ${order.name}. Te envío comprobante de la reserva ${order.id} por ${money(order.total)}.`);
-      byId('paymentDetails').innerHTML=`<div class="paymentBox"><span class="statusPill statusPending">Pago pendiente</span><h2 style="margin:12px 0">Reserva ${order.id}</h2><p class="muted">Tus números quedaron reservados. Para confirmarlos, pagá con alguno de estos métodos y enviá el comprobante.</p><h3 style="margin-top:16px">Total: ${money(order.total)}</h3><div style="margin:16px 0">${(order.items||[]).map(i=>`<div class="adminItem"><span>${i.name}</span><strong>${money(i.price)}</strong></div>`).join('')}</div><p><strong>Alias / CBU:</strong> ${pay.alias}</p>${pay.qr?`<img src="${pay.qr}" alt="QR de pago">`:''}<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><a class="btn primary" href="${pay.link}" target="_blank">Abrir link de pago</a><a class="btn secondary" href="https://wa.me/${pay.whatsapp}?text=${msg}" target="_blank">Enviar comprobante</a></div><p class="muted" style="margin-top:14px">Importante: la compra queda confirmada recién cuando el admin la marca como pagada.</p></div>`;
+      byId('paymentDetails').innerHTML=`<div class="paymentBox"><span class="statusPill statusPending">Pago pendiente</span><h2 style="margin:12px 0">Reserva ${order.id}</h2><p class="muted">Tus números quedaron reservados. Para confirmarlos, pagá con alguno de estos métodos y enviá el comprobante.</p><h3 style="margin-top:16px">Total: ${money(order.total)}</h3><div style="margin:16px 0">${(order.items||[]).map(i=>`<div class="adminItem"><span>${i.name}</span><strong>${money(i.price)}</strong></div>`).join(String.fromCharCode(10))}</div><p><strong>Alias / CBU:</strong> ${pay.alias}</p>${pay.qr?`<img src="${pay.qr}" alt="QR de pago">`:''}<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><a class="btn primary" href="${pay.link}" target="_blank">Abrir link de pago</a><a class="btn secondary" href="https://wa.me/${pay.whatsapp}?text=${msg}" target="_blank">Enviar comprobante</a></div><p class="muted" style="margin-top:14px">Importante: la compra queda confirmada recién cuando el admin la marca como pagada.</p></div>`;
     }
 
-    function renderProducts(){ byId('shopGrid').innerHTML=products.map(p=>`<article class="card shopCard"><img src="${p.img}" alt="${p.name}"><div class="cardBody"><span class="tag">${p.tag}</span><h3>${p.name}</h3><div class="price">${money(p.price)}</div><button class="btn primary" onclick="addCart('${p.name}',${p.price},{type:'product',productId:'${p.id}'})">Agregar al carrito</button></div></article>`).join(''); }
+    function renderProducts(){ byId('shopGrid').innerHTML=products.map(p=>`<article class="card shopCard"><img src="${p.img}" alt="${p.name}"><div class="cardBody"><span class="tag">${p.tag}</span><h3>${p.name}</h3><div class="price">${money(p.price)}</div><button class="btn primary" onclick="addCart('${p.name}',${p.price},{type:'product',productId:'${p.id}'})">Agregar al carrito</button></div></article>`).join(String.fromCharCode(10)); }
 
     function setAdminTab(id,btn){ document.querySelectorAll('.adminPanel').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); byId(id).classList.add('active'); btn.classList.add('active'); }
 
@@ -478,21 +478,18 @@
       if(!byId('adminBrand')) return;
       byId('adminBrand').value=site.brand||''; byId('adminBadge').value=site.badge||''; byId('adminHeroTitle').value=site.heroTitle||''; byId('adminHeroText').value=site.heroText||''; byId('adminStat1').value=site.stat1||''; byId('adminStat2').value=site.stat2||''; byId('adminStat3').value=site.stat3||''; byId('adminHeroImg').value=site.heroImage||''; byId('adminWinnerTitle').value=site.winnerTitle||''; byId('adminWinnerText').value=site.winnerText||''; byId('adminWinnerImg').value=site.winnerImage||''; byId('adminPaymentLink').value=(site.payment&&site.payment.link)||''; byId('adminPaymentAlias').value=(site.payment&&site.payment.alias)||''; byId('adminPaymentQR').value=(site.payment&&site.payment.qr)||''; byId('adminPaymentWhatsapp').value=(site.payment&&site.payment.whatsapp)||'';
       const f=site.footer||defaultSettings.footer;
-      byId('adminFooterBrand').value=f.brand||''; byId('adminFooterDescription').value=f.description||''; byId('adminFooterLinksTitle').value=f.linksTitle||''; byId('adminFooterLinks').value=(f.links||[]).join('
-'); byId('adminFooterLegalTitle').value=f.legalTitle||''; byId('adminFooterLegal').value=(f.legal||[]).join('
-'); byId('adminFooterContactTitle').value=f.contactTitle||''; byId('adminFooterContact').value=(f.contact||[]).join('
-'); byId('adminFooterCopyright').value=f.copyright||'';
-      byId('miniParent').innerHTML=raffles.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
-      byId('winnerRaffleSelect').innerHTML=raffles.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+      byId('adminFooterBrand').value=f.brand||''; byId('adminFooterDescription').value=f.description||''; byId('adminFooterLinksTitle').value=f.linksTitle||''; byId('adminFooterLinks').value=(f.links||[]).join(String.fromCharCode(10)); byId('adminFooterLegalTitle').value=f.legalTitle||''; byId('adminFooterLegal').value=(f.legal||[]).join(String.fromCharCode(10)); byId('adminFooterContactTitle').value=f.contactTitle||''; byId('adminFooterContact').value=(f.contact||[]).join(String.fromCharCode(10)); byId('adminFooterCopyright').value=f.copyright||'';
+      byId('miniParent').innerHTML=raffles.map(r=>`<option value="${r.id}">${r.name}</option>`).join(String.fromCharCode(10));
+      byId('winnerRaffleSelect').innerHTML=raffles.map(r=>`<option value="${r.id}">${r.name}</option>`).join(String.fromCharCode(10));
       renderPaymentsList(); loadWinnerForm();
-      byId('raffleList').innerHTML=raffles.map(r=>`<div class="adminItem"><span>${r.name} — ${money(r.price)} — ${r.lottery} — ${(r.soldNumbers||[]).length}/100 vendidos</span><button class="tab danger" onclick="deleteRaffle('${r.id}')">Eliminar</button></div>`).join('');
-      byId('miniList').innerHTML=raffles.map(r=>(r.miniRaffles||[]).map(m=>`<div class="adminItem"><span>${r.name} / ${m.name} — ${money(m.price)} — ${(m.soldNumbers||[]).length}/10 vendidos</span><button class="tab danger" onclick="deleteMiniRaffle('${r.id}','${m.id}')">Eliminar</button></div>`).join('')).join('')||'<p class="muted">No hay mini rifas.</p>';
-      byId('productList').innerHTML=products.map(p=>`<div class="adminItem"><span>${p.name} — ${money(p.price)}</span><button class="tab danger" onclick="deleteProduct('${p.id}')">Eliminar</button></div>`).join('');
+      byId('raffleList').innerHTML=raffles.map(r=>`<div class="adminItem"><span>${r.name} — ${money(r.price)} — ${r.lottery} — ${(r.soldNumbers||[]).length}/100 vendidos</span><button class="tab danger" onclick="deleteRaffle('${r.id}')">Eliminar</button></div>`).join(String.fromCharCode(10));
+      byId('miniList').innerHTML=raffles.map(r=>(r.miniRaffles||[]).map(m=>`<div class="adminItem"><span>${r.name} / ${m.name} — ${money(m.price)} — ${(m.soldNumbers||[]).length}/10 vendidos</span><button class="tab danger" onclick="deleteMiniRaffle('${r.id}','${m.id}')">Eliminar</button></div>`).join(String.fromCharCode(10))).join(String.fromCharCode(10))||'<p class="muted">No hay mini rifas.</p>';
+      byId('productList').innerHTML=products.map(p=>`<div class="adminItem"><span>${p.name} — ${money(p.price)}</span><button class="tab danger" onclick="deleteProduct('${p.id}')">Eliminar</button></div>`).join(String.fromCharCode(10));
     }
 
     function renderPaymentsList(){
       if(!byId('paymentsList')) return;
-      byId('paymentsList').innerHTML=orders.length?orders.map(o=>`<div class="adminItem"><div><span class="statusPill ${o.status==='paid'?'statusPaid':'statusPending'}">${o.status==='paid'?'Pagado':'Pendiente'}</span><p><strong>${o.id}</strong> — ${o.name} ${o.contact?'· '+o.contact:''}</p><p class="muted">${money(o.total)}</p><p class="muted">${(o.items||[]).map(it=>it.name).join(' | ')}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="tab" onclick="showPaymentScreenById('${o.id}')">Ver pago</button>${o.status==='pending'?`<button class="tab active" onclick="markOrderPaid('${o.id}')">Marcar pagado</button>`:''}<button class="tab danger" onclick="deleteOrder('${o.id}')">Eliminar</button></div></div>`).join(''):'<p class="muted">No hay reservas todavía.</p>';
+      byId('paymentsList').innerHTML=orders.length?orders.map(o=>`<div class="adminItem"><div><span class="statusPill ${o.status==='paid'?'statusPaid':'statusPending'}">${o.status==='paid'?'Pagado':'Pendiente'}</span><p><strong>${o.id}</strong> — ${o.name} ${o.contact?'· '+o.contact:''}</p><p class="muted">${money(o.total)}</p><p class="muted">${(o.items||[]).map(it=>it.name).join(' | ')}</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="tab" onclick="showPaymentScreenById('${o.id}')">Ver pago</button>${o.status==='pending'?`<button class="tab active" onclick="markOrderPaid('${o.id}')">Marcar pagado</button>`:''}<button class="tab danger" onclick="deleteOrder('${o.id}')">Eliminar</button></div></div>`).join(String.fromCharCode(10)):'<p class="muted">No hay reservas todavía.</p>';
     }
 
     async function showPaymentScreenById(id){ const snap=await getDoc(doc(db,'orders',id)); if(snap.exists()){showPaymentScreen({id:snap.id,...snap.data()}); openModal('paymentModal');} }
@@ -503,14 +500,11 @@
         brand:byId('adminFooterBrand').value,
         description:byId('adminFooterDescription').value,
         linksTitle:byId('adminFooterLinksTitle').value,
-        links:byId('adminFooterLinks').value.split('
-').map(x=>x.trim()).filter(Boolean),
+        links:byId('adminFooterLinks').value.split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean),
         legalTitle:byId('adminFooterLegalTitle').value,
-        legal:byId('adminFooterLegal').value.split('
-').map(x=>x.trim()).filter(Boolean),
+        legal:byId('adminFooterLegal').value.split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean),
         contactTitle:byId('adminFooterContactTitle').value,
-        contact:byId('adminFooterContact').value.split('
-').map(x=>x.trim()).filter(Boolean),
+        contact:byId('adminFooterContact').value.split(String.fromCharCode(10)).map(x=>x.trim()).filter(Boolean),
         copyright:byId('adminFooterCopyright').value
       }});
       alert('Footer guardado');
