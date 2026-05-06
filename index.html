@@ -16,7 +16,7 @@
     a{text-decoration:none;color:inherit} img{max-width:100%;display:block}.wrap{width:min(1180px,92%);margin:auto}.glass{background:rgba(16,37,29,.72);border:1px solid var(--line);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
     header{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(5,9,7,.78);backdrop-filter:blur(20px)}
     .nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{font-weight:950;letter-spacing:.5px;font-size:1.1rem;display:flex;align-items:center;gap:10px}.brand:before{content:"";width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 0 25px var(--green)}
-    nav{display:flex;gap:24px;color:var(--muted);font-weight:700;font-size:.95rem}.nav a:hover{color:var(--green)}.actions{display:flex;align-items:center;gap:12px}.cartBtn,.loginBtn,.adminMini{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:999px;padding:11px 15px;font-weight:800;cursor:pointer}.cartBtn span{display:inline-grid;place-items:center;background:var(--green);color:#07110d;width:22px;height:22px;border-radius:50%;font-size:.8rem;margin-left:6px}.loginBtn{background:linear-gradient(135deg,var(--green),var(--green2));color:#07110d;border:0}.adminMini{display:none;color:var(--green)}
+    nav{display:flex;gap:24px;color:var(--muted);font-weight:700;font-size:.95rem}.nav a:hover{color:var(--green)}.actions{display:flex;align-items:center;gap:12px}.cartBtn,.loginBtn,.adminMini{border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);border-radius:999px;padding:11px 15px;font-weight:800;cursor:pointer}.cartBtn span{display:inline-grid;place-items:center;background:var(--green);color:#07110d;width:22px;height:22px;border-radius:50%;font-size:.8rem;margin-left:6px}.loginBtn{background:linear-gradient(135deg,var(--green),var(--green2));color:#07110d;border:0}.loginBtn.logout{background:rgba(255,93,93,.16);color:#ff9e9e;border:1px solid rgba(255,93,93,.35)}.adminMini{display:none;color:var(--green)}
     .hero{padding:80px 0 70px}.heroGrid{display:grid;grid-template-columns:1.03fr .97fr;gap:54px;align-items:center}.eyebrow{display:inline-flex;align-items:center;gap:10px;background:rgba(124,255,107,.1);border:1px solid rgba(124,255,107,.25);color:var(--green);border-radius:999px;padding:9px 15px;font-weight:850;margin-bottom:22px}.hero h1{font-size:clamp(3rem,7vw,6.8rem);line-height:.9;letter-spacing:-.07em;margin-bottom:26px}.hero h1 span{display:block;color:var(--green)}.hero p{color:var(--muted);font-size:1.18rem;line-height:1.7;max-width:650px}.heroBtns{display:flex;gap:15px;flex-wrap:wrap;margin:34px 0}.btn{border:0;border-radius:999px;padding:14px 20px;font-weight:950;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:10px}.btn:hover{transform:translateY(-2px)}.primary{background:linear-gradient(135deg,var(--green),var(--green2));color:#07110d}.secondary{background:rgba(255,255,255,.08);color:white;border:1px solid var(--line)}.danger{background:rgba(255,93,93,.1);color:#ff9e9e;border:1px solid rgba(255,93,93,.25)}
     .stats{display:flex;gap:36px;flex-wrap:wrap;margin-top:34px}.stat strong{font-size:2rem;color:white;display:block}.stat small{color:var(--muted);font-weight:700}.smash{border-radius:34px;overflow:hidden;min-height:520px;position:relative;background:linear-gradient(135deg,#142a20,#0a130f)}.smash img{width:100%;height:520px;object-fit:cover;opacity:.88}.smash:after{content:"SMASH";position:absolute;right:-25px;bottom:30px;font-size:5.6rem;font-weight:1000;letter-spacing:-.08em;color:rgba(124,255,107,.23);transform:rotate(-6deg)}
     section{padding:88px 0}.sectionHead{text-align:center;max-width:720px;margin:0 auto 42px}.label{color:var(--green);font-weight:950;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;margin-bottom:12px}.sectionHead h2{font-size:clamp(2.1rem,4vw,4rem);letter-spacing:-.05em;margin-bottom:14px}.sectionHead p{color:var(--muted);line-height:1.65}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}.card{border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.055);overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.18)}.cardBody{padding:22px}.card h3{font-size:1.25rem;margin-bottom:8px}.muted{color:var(--muted);line-height:1.55}.price{font-size:2rem;font-weight:1000;color:var(--green);margin:14px 0}.card img{height:230px;width:100%;object-fit:cover;background:#12251d}.progress{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin:18px 0}.bar{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:999px}
@@ -39,7 +39,7 @@
   
 
   <div class="modal" id="cartModal"><div class="modalBox"><div class="modalHead"><h3>Tu Carrito</h3><button class="close" onclick="closeModal('cartModal')">×</button></div><div class="modalContent"><div id="cartItems"></div><h3 style="margin-top:18px">Subtotal <span id="subtotal">$0</span></h3><button class="btn primary" style="margin-top:18px" onclick="checkout()">Finalizar compra</button></div></div></div>
-  <div class="modal" id="loginModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Bienvenido</h3><button class="close" type="button" onclick="__closeModalFallback('loginModal')">×</button></div><div class="modalContent"><label>Email</label><input class="input" id="loginEmail" placeholder="admin@padelrifassn.com"><label>Contraseña</label><input class="input" id="loginPass" type="password" placeholder="admin123"><button class="btn primary" type="button" onclick="__loginClick()">Entrar</button><button class="btn secondary" type="button" style="margin-left:8px" onclick="__registerClick()">Crear cuenta</button><button class="btn danger" type="button" style="margin-top:10px" onclick="__logoutClick()">Cerrar sesión</button></div></div></div>
+  <div class="modal" id="loginModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Bienvenido</h3><button class="close" type="button" onclick="__closeModalFallback('loginModal')">×</button></div><div class="modalContent"><label>Email</label><input class="input" id="loginEmail" placeholder="admin@padelrifassn.com"><label>Contraseña</label><input class="input" id="loginPass" type="password" placeholder="admin123"><button class="btn primary" type="button" onclick="__loginClick()">Entrar</button><button class="btn secondary" type="button" style="margin-left:8px" onclick="__registerClick()">Crear cuenta</button></div></div></div>
   <div class="modal" id="buyerModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Datos del comprador</h3><button class="close" onclick="closeModal('buyerModal')">×</button></div><div class="modalContent"><p class="muted">Los números quedarán reservados hasta que el admin confirme el pago.</p><label>Nombre del comprador</label><input class="input" id="buyerName" placeholder="Ej: Juan Pérez"><label>WhatsApp o Instagram</label><input class="input" id="buyerContact" placeholder="Ej: @juanperez o 11 1234-5678"><button class="btn primary" onclick="confirmCheckoutWithBuyer()">Generar reserva y ver pago</button></div></div></div>
   <div class="modal" id="paymentModal"><div class="modalBox"><div class="modalHead"><h3>Pago pendiente</h3><button class="close" onclick="closeModal('paymentModal')">×</button></div><div class="modalContent"><div id="paymentDetails"></div></div></div></div>
   <div class="modal" id="chooseNumbersModal"><div class="modalBox"><div class="modalHead"><h3>Elegí 10 números de la rifa grande</h3><button class="close" onclick="closeModal('chooseNumbersModal')">×</button></div><div class="modalContent"><p class="muted">Esto simula el premio de ganar una mini rifa. Seleccioná exactamente 10 números disponibles.</p><div class="numberBox" id="winnerPickBox"></div><button class="btn primary" onclick="confirmWinnerPick()">Confirmar 10 números</button></div></div></div>
@@ -70,8 +70,8 @@
       const btn = document.getElementById('authButton');
       const mode = btn ? btn.dataset.mode : 'login';
 
-      if(mode === 'admin' && window.__openAdminReal) return window.__openAdminReal();
       if(mode === 'logout' && window.__logoutReal) return window.__logoutReal();
+      if(mode === 'logout') return alert('Firebase todavía está cargando. Esperá unos segundos.');
 
       window.__openModalFallback('loginModal');
     };
@@ -241,27 +241,21 @@
       const btn = byId('authButton');
       if(!btn) return;
 
-      if(currentUser && isAdmin){
-        btn.textContent = 'Panel';
-        btn.dataset.mode = 'admin';
-        btn.classList.add('secondary');
-        return;
-      }
-
       if(currentUser){
         btn.textContent = 'Cerrar sesión';
         btn.dataset.mode = 'logout';
-        btn.classList.add('secondary');
+        btn.classList.add('logout');
+        btn.classList.remove('secondary');
         return;
       }
 
       btn.textContent = 'Acceder';
       btn.dataset.mode = 'login';
+      btn.classList.remove('logout');
       btn.classList.remove('secondary');
     }
 
     function handleAuthButton(){
-      if(currentUser && isAdmin) return openAdmin();
       if(currentUser) return logoutUser();
       return openModal('loginModal');
     }
