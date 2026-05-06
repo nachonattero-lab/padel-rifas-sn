@@ -296,8 +296,131 @@
 
     async function showPaymentScreenById(id){ const snap=await getDoc(doc(db,'orders',id)); if(snap.exists()){showPaymentScreen({id:snap.id,...snap.data()}); openModal('paymentModal');} }
     async function savePaymentConfig(){ if(!isAdmin) return alert('Solo admin.'); await updateDoc(settingsRef,{payment:{link:byId('adminPaymentLink').value,alias:byId('adminPaymentAlias').value,qr:byId('adminPaymentQR').value,whatsapp:byId('adminPaymentWhatsapp').value}}); alert('Métodos de pago guardados'); }
-    async function markOrderPaid(id){ if(!isAdmin) return alert('Solo admin.'); const orderSnap=await getDoc(doc(db,'orders',id)); if(!orderSnap.exists()) return; const order=orderSnap.data(); await runTransaction(db, async tx=>{ for(const item of order.items||[]){ const m=item.meta; if(m.type==='big'){ const ref=doc(db,'raffles',m.raffleId); const r=(await tx.get(ref)).data(); const owners={...(r.soldOwners||{})}; owners[m.number]={...(owners[m.number]||{}),status:'paid'}; tx.update(ref,{soldOwners:owners}); } if(m.type==='mini'){ const ref=doc(db,'raffles',m.raffleId); const r=(await tx.get(ref)).data(); const minis=(r.miniRaffles||[]).map(mini=> mini.id===m.miniId ? {...mini, soldOwners:{...(mini.soldOwners||{}), [m.number]:{...((mini.soldOwners||{})[m.number]||{}), status:'paid'}}} : mini); tx.update(ref,{miniRaffles:minis}); } } tx.update(doc(db,'orders',id),{status:'paid',paidAt:serverTimestamp()}); }); alert('Reserva marcada como pagada'); }
-    async function deleteOrder(id){ if(!isAdmin) return alert('Solo admin.'); if(!confirm('¿Eliminar esta reserva? Sus números volverán a estar disponibles.')) return; const orderSnap=await getDoc(doc(db,'orders',id)); if(!orderSnap.exists()) return; const order=orderSnap.data(); await runTransaction(db, async tx=>{ for(const item of order.items||[]){ const m=item.meta; if(m.type==='big'){ const ref=doc(db,'raffles',m.raffleId); const r=(await tx.get(ref)).data(); const nums=(r.soldNumbers||[]).filter(n=>n!==m.number); const owners={...(r.soldOwners||{})}; delete owners[m.number]; tx.update(ref,{soldNumbers:nums,soldOwners:owners}); } if(m.type==='mini'){ const ref=doc(db,'raffles',m.raffleId); const r=(await tx.get(ref)).data(); const minis=(r.miniRaffles||[]).map(mini=>{ if(mini.id!==m.miniId) return mini; const owners={...(mini.soldOwners||{})}; delete owners[m.number]; return {...mini, soldNumbers:(mini.soldNumbers||[]).filter(n=>n!==m.number), soldOwners:owners}; }); tx.update(ref,{miniRaffles:minis}); } } tx.delete(doc(db,'orders',id)); }); alert('Reserva eliminada'); }
+    async function markOrderPaid(id){
+      if(!isAdmin) return alert('Solo admin.');
+      const orderRef = doc(db,'orders',id);
+      await runTransaction(db, async tx=>{
+        const orderSnap = await tx.get(orderRef);
+        if(!orderSnap.exists()) throw new Error('La reserva no existe.');
+        const order = orderSnap.data();
+
+        const raffleIds = [...new Set((order.items||[])
+          .filter(item => item.meta && (item.meta.type==='big' || item.meta.type==='mini'))
+          .map(item => item.meta.raffleId))];
+
+        const raffleRefs = raffleIds.map(rid => doc(db,'raffles',rid));
+        const raffleDocs = {};
+
+        // Firestore exige que TODAS las lecturas se hagan antes de cualquier escritura.
+        for(const ref of raffleRefs){
+          const snap = await tx.get(ref);
+          if(!snap.exists()) throw new Error('Una rifa de esta reserva ya no existe.');
+          raffleDocs[ref.id] = { ref, data: snap.data() };
+        }
+
+        const updates = {};
+
+        for(const item of order.items||[]){
+          const m = item.meta || {};
+
+          if(m.type === 'big'){
+            const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
+            const owners = { ...(current.soldOwners || {}) };
+            owners[m.number] = { ...(owners[m.number] || {}), status:'paid' };
+            updates[m.raffleId] = { ...current, soldOwners: owners };
+          }
+
+          if(m.type === 'mini'){
+            const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
+            const minis = (current.miniRaffles || []).map(mini => {
+              if(mini.id !== m.miniId) return mini;
+              const miniOwners = { ...(mini.soldOwners || {}) };
+              miniOwners[m.number] = { ...(miniOwners[m.number] || {}), status:'paid' };
+              return { ...mini, soldOwners: miniOwners };
+            });
+            updates[m.raffleId] = { ...current, miniRaffles: minis };
+          }
+        }
+
+        Object.entries(updates).forEach(([raffleId, updated])=>{
+          tx.update(raffleDocs[raffleId].ref, {
+            soldOwners: updated.soldOwners || {},
+            miniRaffles: updated.miniRaffles || []
+          });
+        });
+
+        tx.update(orderRef,{status:'paid',paidAt:serverTimestamp()});
+      });
+      alert('Reserva marcada como pagada');
+    }
+    async function deleteOrder(id){
+      if(!isAdmin) return alert('Solo admin.');
+      if(!confirm('¿Eliminar esta reserva? Sus números volverán a estar disponibles.')) return;
+      const orderRef = doc(db,'orders',id);
+
+      await runTransaction(db, async tx=>{
+        const orderSnap = await tx.get(orderRef);
+        if(!orderSnap.exists()) return;
+        const order = orderSnap.data();
+
+        const raffleIds = [...new Set((order.items||[])
+          .filter(item => item.meta && (item.meta.type==='big' || item.meta.type==='mini'))
+          .map(item => item.meta.raffleId))];
+
+        const raffleRefs = raffleIds.map(rid => doc(db,'raffles',rid));
+        const raffleDocs = {};
+
+        // Primero leemos todo.
+        for(const ref of raffleRefs){
+          const snap = await tx.get(ref);
+          if(snap.exists()) raffleDocs[ref.id] = { ref, data: snap.data() };
+        }
+
+        const updates = {};
+
+        for(const item of order.items||[]){
+          const m = item.meta || {};
+          if(!raffleDocs[m.raffleId]) continue;
+
+          if(m.type === 'big'){
+            const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
+            const owners = { ...(current.soldOwners || {}) };
+            delete owners[m.number];
+            updates[m.raffleId] = {
+              ...current,
+              soldNumbers: (current.soldNumbers || []).filter(n => n !== m.number),
+              soldOwners: owners
+            };
+          }
+
+          if(m.type === 'mini'){
+            const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
+            const minis = (current.miniRaffles || []).map(mini => {
+              if(mini.id !== m.miniId) return mini;
+              const owners = { ...(mini.soldOwners || {}) };
+              delete owners[m.number];
+              return {
+                ...mini,
+                soldNumbers: (mini.soldNumbers || []).filter(n => n !== m.number),
+                soldOwners: owners
+              };
+            });
+            updates[m.raffleId] = { ...current, miniRaffles: minis };
+          }
+        }
+
+        Object.entries(updates).forEach(([raffleId, updated])=>{
+          tx.update(raffleDocs[raffleId].ref, {
+            soldNumbers: updated.soldNumbers || [],
+            soldOwners: updated.soldOwners || {},
+            miniRaffles: updated.miniRaffles || []
+          });
+        });
+
+        tx.delete(orderRef);
+      });
+      alert('Reserva eliminada');
+    }
 
     function loadWinnerForm(){
       const select=byId('winnerRaffleSelect'); if(!select) return; const r=raffles.find(x=>x.id===select.value); if(!r) return;
