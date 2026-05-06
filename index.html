@@ -27,7 +27,7 @@
   </style>
 </head>
 <body>
-  <header><div class="wrap nav"><a class="brand" href="#top" id="brandName">PADEL RIFAS SN</a><nav><a href="#rifas">Rifas</a><a href="#tienda">Tienda</a><a href="#funciona">Cómo Funciona</a><a href="#ganadores">Ganadores</a></nav><div class="actions"><button class="adminMini" id="adminOpenBtn" onclick="openAdmin()">Panel admin</button><button class="cartBtn" onclick="openModal('cartModal')">🛒 <span id="cartCount">0</span></button><button class="loginBtn" id="authButton" type="button" onclick="handleAuthButton()">Acceder</button></div></div></header>
+  <header><div class="wrap nav"><a class="brand" href="#top" id="brandName">PADEL RIFAS SN</a><nav><a href="#rifas">Rifas</a><a href="#tienda">Tienda</a><a href="#funciona">Cómo Funciona</a><a href="#ganadores">Ganadores</a></nav><div class="actions"><button class="adminMini" id="adminOpenBtn" onclick="openAdmin()">Panel admin</button><button class="cartBtn" onclick="openModal('cartModal')">🛒 <span id="cartCount">0</span></button><button class="loginBtn" id="authButton" type="button" onclick="__authButtonClick()">Acceder</button></div></div></header>
   <main id="top">
     <section class="hero"><div class="wrap heroGrid"><div><div class="eyebrow" id="heroBadge">Sorteos Activos Ahora</div><h1 id="heroTitle">Estrenar pala <span>premium nunca fue tan fácil.</span></h1><p id="heroText">Participa en nuestras rifas exclusivas y llévate el mejor equipamiento del World Padel Tour por el precio de una caña.</p><div class="heroBtns"><a class="btn primary" href="#rifas">Ver Rifas Activas</a><a class="btn secondary" href="#tienda">Explorar Tienda</a></div><div class="stats"><div class="stat"><strong id="stat1">+12K</strong><small>Participantes</small></div><div class="stat"><strong id="stat2">340</strong><small>Ganadores</small></div><div class="stat"><strong id="stat3">100%</strong><small>Transparencia</small></div></div></div><div class="smash glass"><img id="heroImage" alt="Smash" src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80"></div></div></section>
     <section id="rifas"><div class="wrap"><div class="sectionHead"><div class="label">Rifas Activas</div><h2>Tu próximo premio te espera</h2><p>La rifa grande va del 00 al 99. Las mini rifas van del 0 al 9: el ganador elige 10 números de la rifa grande.</p></div><div class="grid" id="rafflesGrid"></div></div></section>
@@ -53,6 +53,29 @@
     <div class="adminPanel" id="paymentsAdmin"><p class="muted">Acá el admin ve las reservas pendientes y las marca como pagadas cuando recibe el comprobante.</p><div class="formGrid"><div><label>Link de pago</label><input class="input" id="adminPaymentLink" placeholder="https://mpago.la/... "></div><div><label>Alias / CBU</label><input class="input" id="adminPaymentAlias" placeholder="ALIAS.PAGO.MP"></div><div><label>URL del QR</label><input class="input" id="adminPaymentQR" placeholder="https://.../qr.png"></div><div><label>WhatsApp para comprobantes</label><input class="input" id="adminPaymentWhatsapp" placeholder="5491112345678"></div></div><button class="btn primary" onclick="savePaymentConfig()">Guardar métodos de pago</button><div class="adminList" id="paymentsList" style="margin-top:16px"></div></div>
     <div class="adminPanel" id="ganadoresAdmin"><label>Título ganadores</label><input class="input" id="adminWinnerTitle"><label>Texto</label><textarea id="adminWinnerText"></textarea><label>Imagen ganador URL</label><input class="input" id="adminWinnerImg"><button class="btn primary" onclick="saveWinner()">Guardar ganadores</button></div>
   </div></div></div>
+
+  <script>
+    // Fallback simple: hace que Acceder funcione aunque Firebase todavía no haya cargado.
+    window.__openModalFallback = function(id){
+      const modal = document.getElementById(id);
+      if(modal) modal.classList.add('open');
+    };
+
+    window.__closeModalFallback = function(id){
+      const modal = document.getElementById(id);
+      if(modal) modal.classList.remove('open');
+    };
+
+    window.__authButtonClick = function(){
+      const btn = document.getElementById('authButton');
+      const mode = btn ? btn.dataset.mode : 'login';
+
+      if(mode === 'admin' && window.__openAdminReal) return window.__openAdminReal();
+      if(mode === 'logout' && window.__logoutReal) return window.__logoutReal();
+
+      window.__openModalFallback('loginModal');
+    };
+  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -98,6 +121,9 @@
     function openModal(id){ byId(id).classList.add('open'); }
     function closeModal(id){ byId(id).classList.remove('open'); }
     function openAdmin(){ if(!isAdmin) return alert('Solo el admin puede abrir este panel.'); openModal('adminModal'); renderAdmin(); }
+
+    window.__openAdminReal = openAdmin;
+    window.__logoutReal = logoutUser;
 
     async function ensureInitialData(){
       const snap = await getDoc(settingsRef);
@@ -186,17 +212,20 @@
 
       if(currentUser && isAdmin){
         btn.textContent = 'Panel';
+        btn.dataset.mode = 'admin';
         btn.classList.add('secondary');
         return;
       }
 
       if(currentUser){
         btn.textContent = 'Cerrar sesión';
+        btn.dataset.mode = 'logout';
         btn.classList.add('secondary');
         return;
       }
 
       btn.textContent = 'Acceder';
+      btn.dataset.mode = 'login';
       btn.classList.remove('secondary');
     }
 
@@ -205,6 +234,8 @@
       if(currentUser) return logoutUser();
       return openModal('loginModal');
     }
+
+    window.__authButtonClick = handleAuthButton;
 
     function pctSold(r){ return Math.round(((r.soldNumbers||[]).length/100)*100); }
 
