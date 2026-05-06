@@ -235,36 +235,108 @@
     async function reserveNumbersTransaction(name, contact){
       const orderRef = doc(collection(db,'orders'));
       const total = cart.reduce((a,b)=>a+Number(b.price),0);
+
       await runTransaction(db, async tx => {
-        const refs = [...new Set(cart.filter(i=>i.meta.type==='big'||i.meta.type==='mini').map(i=>i.meta.raffleId))].map(id=>doc(db,'raffles',id));
-        const snaps = {};
-        for(const ref of refs){ snaps[ref.id] = await tx.get(ref); if(!snaps[ref.id].exists()) throw new Error('Una rifa ya no existe.'); }
+        const raffleIds = [...new Set(cart
+          .filter(i => i.meta && (i.meta.type === 'big' || i.meta.type === 'mini'))
+          .map(i => i.meta.raffleId))];
+
+        const raffleRefs = raffleIds.map(id => doc(db,'raffles',id));
+        const raffleDocs = {};
+
+        // Primero se leen TODAS las rifas involucradas.
+        for(const ref of raffleRefs){
+          const snap = await tx.get(ref);
+          if(!snap.exists()) throw new Error('Una rifa ya no existe.');
+          raffleDocs[ref.id] = { ref, data: snap.data() };
+        }
+
+        // Validamos disponibilidad antes de escribir.
         for(const item of cart){
-          const m=item.meta;
-          if(m.type==='big'){
-            const r=snaps[m.raffleId].data();
-            if((r.soldNumbers||[]).includes(m.number)) throw new Error(`El número ${String(m.number).padStart(2,'0')} ya no está disponible.`);
+          const m = item.meta || {};
+
+          if(m.type === 'big'){
+            const r = raffleDocs[m.raffleId].data;
+            if((r.soldNumbers || []).includes(m.number)){
+              throw new Error(`El número ${String(m.number).padStart(2,'0')} ya no está disponible.`);
+            }
           }
-          if(m.type==='mini'){
-            const r=snaps[m.raffleId].data(); const mini=(r.miniRaffles||[]).find(x=>x.id===m.miniId);
-            if(!mini || (mini.soldNumbers||[]).includes(m.number)) throw new Error(`El número mini ${m.number} ya no está disponible.`);
+
+          if(m.type === 'mini'){
+            const r = raffleDocs[m.raffleId].data;
+            const mini = (r.miniRaffles || []).find(x => x.id === m.miniId);
+            if(!mini || (mini.soldNumbers || []).includes(m.number)){
+              throw new Error(`El número mini ${m.number} ya no está disponible.`);
+            }
           }
         }
+
+        // Acumulamos TODOS los cambios por rifa para no pisar números anteriores.
+        const updates = {};
+
         for(const item of cart){
-          const m=item.meta;
-          if(m.type==='big'){
-            const ref=doc(db,'raffles',m.raffleId); const r={...snaps[m.raffleId].data()};
-            r.soldNumbers=[...(r.soldNumbers||[]), m.number]; r.soldOwners={...(r.soldOwners||{}), [m.number]:{name,contact,status:'pending',orderId:orderRef.id,userId:currentUser?.uid||null}};
-            tx.update(ref,{soldNumbers:r.soldNumbers,soldOwners:r.soldOwners});
+          const m = item.meta || {};
+
+          if(m.type === 'big'){
+            const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
+            const soldNumbers = Array.from(new Set([...(current.soldNumbers || []), m.number]));
+            const soldOwners = {
+              ...(current.soldOwners || {}),
+              [m.number]: {
+                name,
+                contact,
+                status:'pending',
+                orderId: orderRef.id,
+                userId: currentUser?.uid || null
+              }
+            };
+            updates[m.raffleId] = { ...current, soldNumbers, soldOwners };
           }
-          if(m.type==='mini'){
-            const ref=doc(db,'raffles',m.raffleId); const r={...snaps[m.raffleId].data()};
-            r.miniRaffles=(r.miniRaffles||[]).map(mini=> mini.id===m.miniId ? {...mini, soldNumbers:[...(mini.soldNumbers||[]),m.number], soldOwners:{...(mini.soldOwners||{}), [m.number]:{name,contact,status:'pending',orderId:orderRef.id,userId:currentUser?.uid||null}}} : mini);
-            tx.update(ref,{miniRaffles:r.miniRaffles});
+
+          if(m.type === 'mini'){
+            const current = updates[m.raffleId] || { ...raffleDocs[m.raffleId].data };
+            const miniRaffles = (current.miniRaffles || []).map(mini => {
+              if(mini.id !== m.miniId) return mini;
+              return {
+                ...mini,
+                soldNumbers: Array.from(new Set([...(mini.soldNumbers || []), m.number])),
+                soldOwners: {
+                  ...(mini.soldOwners || {}),
+                  [m.number]: {
+                    name,
+                    contact,
+                    status:'pending',
+                    orderId: orderRef.id,
+                    userId: currentUser?.uid || null
+                  }
+                }
+              };
+            });
+            updates[m.raffleId] = { ...current, miniRaffles };
           }
         }
-        tx.set(orderRef,{name,contact,userId:currentUser?.uid||null,status:'pending',items:cart,total,createdAt:serverTimestamp(),createdAtMs:Date.now()});
+
+        // Ahora sí, escribimos una sola vez por cada rifa.
+        Object.entries(updates).forEach(([raffleId, updated]) => {
+          tx.update(raffleDocs[raffleId].ref, {
+            soldNumbers: updated.soldNumbers || [],
+            soldOwners: updated.soldOwners || {},
+            miniRaffles: updated.miniRaffles || []
+          });
+        });
+
+        tx.set(orderRef,{
+          name,
+          contact,
+          userId: currentUser?.uid || null,
+          status:'pending',
+          items:cart,
+          total,
+          createdAt:serverTimestamp(),
+          createdAtMs:Date.now()
+        });
       });
+
       return orderRef.id;
     }
 
