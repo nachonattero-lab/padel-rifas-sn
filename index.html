@@ -27,7 +27,7 @@
   </style>
 </head>
 <body>
-  <header><div class="wrap nav"><a class="brand" href="#top" id="brandName">PADEL RIFAS SN</a><nav><a href="#rifas">Rifas</a><a href="#tienda">Tienda</a><a href="#funciona">Cómo Funciona</a><a href="#ganadores">Ganadores</a><a href="#contacto">Contacto</a></nav><div class="actions"><button class="adminMini" id="adminOpenBtn" onclick="openAdmin()">Panel admin</button><button class="cartBtn" onclick="openModal('cartModal')">🛒 <span id="cartCount">0</span></button><button class="loginBtn" onclick="openModal('loginModal')">Acceder</button></div></div></header>
+  <header><div class="wrap nav"><a class="brand" href="#top" id="brandName">PADEL RIFAS SN</a><nav><a href="#rifas">Rifas</a><a href="#tienda">Tienda</a><a href="#funciona">Cómo Funciona</a><a href="#ganadores">Ganadores</a><a href="#contacto">Contacto</a></nav><div class="actions"><button class="adminMini" id="adminOpenBtn" onclick="openAdmin()">Panel admin</button><button class="cartBtn" onclick="openModal('cartModal')">🛒 <span id="cartCount">0</span></button><button class="loginBtn" id="authButton" onclick="authButtonClick()">Acceder</button></div></div></header>
   <main id="top">
     <section class="hero"><div class="wrap heroGrid"><div><div class="eyebrow" id="heroBadge">Sorteos Activos Ahora</div><h1 id="heroTitle">Estrenar pala <span>premium nunca fue tan fácil.</span></h1><p id="heroText">Participa en nuestras rifas exclusivas y llévate el mejor equipamiento del World Padel Tour por el precio de una caña.</p><div class="heroBtns"><a class="btn primary" href="#rifas">Ver Rifas Activas</a><a class="btn secondary" href="#tienda">Explorar Tienda</a></div><div class="stats"><div class="stat"><strong id="stat1">+12K</strong><small>Participantes</small></div><div class="stat"><strong id="stat2">340</strong><small>Ganadores</small></div><div class="stat"><strong id="stat3">100%</strong><small>Transparencia</small></div></div></div><div class="smash glass"><img id="heroImage" alt="Smash" src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80"></div></div></section>
     <section id="rifas"><div class="wrap"><div class="sectionHead"><div class="label">Rifas Activas</div><h2>Tu próximo premio te espera</h2><p>La rifa grande va del 00 al 99. Las mini rifas van del 0 al 9: el ganador elige 10 números de la rifa grande.</p></div><div class="grid" id="rafflesGrid"></div></div></section>
@@ -36,16 +36,17 @@
     <section id="ganadores"><div class="wrap winner"><div class="winnerImg glass"><img id="winnerImage" src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1200&q=80" alt="Ganador"></div><div><span class="verified">SORTEO VERIFICADO</span><div class="label">Ganadores Reales</div><h2 class="quote" id="winnerTitle">Sus historias te van a motivar</h2><p class="muted" id="winnerText" style="margin-top:18px">Cada ganador se publica con sorteo, número premiado y comprobación de la lotería utilizada.</p></div></div></section>
     <section id="contacto"><div class="wrap"><div class="contactBox glass"><h2>¿Necesitás ayuda?</h2><p class="muted" style="max-width:680px;margin:14px auto 24px">Nuestro asistente resuelve tus dudas al instante.</p><button class="btn primary" onclick="alert('Abrir chat o WhatsApp')">Chatear ahora</button></div></div></section>
   </main>
-  <footer class="footer"><div class="wrap"><div class="footerGrid"><div><h3>PADEL RIFAS SN</h3><p class="muted">La forma más emocionante de equiparte con lo mejor del pádel.</p></div><div><h4>Enlaces</h4><ul><li>Rifas</li><li>Tienda</li><li>Ganadores</li></ul></div><div><h4>Legal</h4><ul><li>Términos</li><li>Bases</li><li>Privacidad</li></ul></div><div><h4>Contacto</h4><ul><li>hola@padelrifassn.com</li><li>+54 9 11 0000-0000</li></ul></div></div><p class="copyright">© 2026 PADEL RIFAS SN.</p></div></footer>
-  <button class="floatChat" onclick="alert('Asistente PADEL RIFAS SN')">💬 Asistente</button>
+  <footer class="footer"><div class="wrap"><div class="footerGrid"><div><h3 id="footerBrand">PADEL RIFAS SN</h3><p class="muted" id="footerDescription">La forma más emocionante de equiparte con lo mejor del pádel.</p></div><div><h4 id="footerLinksTitle">Enlaces</h4><ul id="footerLinksList"><li>Rifas</li><li>Tienda</li><li>Ganadores</li></ul></div><div><h4 id="footerLegalTitle">Legal</h4><ul id="footerLegalList"><li>Términos</li><li>Bases</li><li>Privacidad</li></ul></div><div><h4 id="footerContactTitle">Contacto</h4><ul id="footerContactList"><li>hola@padelrifassn.com</li><li>+54 9 11 0000-0000</li></ul></div></div><p class="copyright" id="footerCopyright">© 2026 PADEL RIFAS SN.</p></div></footer>
+  
 
   <div class="modal" id="cartModal"><div class="modalBox"><div class="modalHead"><h3>Tu Carrito</h3><button class="close" onclick="closeModal('cartModal')">×</button></div><div class="modalContent"><div id="cartItems"></div><h3 style="margin-top:18px">Subtotal <span id="subtotal">$0</span></h3><button class="btn primary" style="margin-top:18px" onclick="checkout()">Finalizar compra</button></div></div></div>
   <div class="modal" id="loginModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Bienvenido</h3><button class="close" onclick="closeModal('loginModal')">×</button></div><div class="modalContent"><label>Email</label><input class="input" id="loginEmail" placeholder="admin@padelrifassn.com"><label>Contraseña</label><input class="input" id="loginPass" type="password" placeholder="admin123"><button class="btn primary" onclick="login()">Entrar</button><button class="btn secondary" style="margin-left:8px" onclick="registerUser()">Crear cuenta</button><button class="btn danger" style="margin-top:10px" onclick="logoutUser()">Cerrar sesión</button><p class="muted" style="margin-top:15px;font-size:.9rem">Para admin real: creá el usuario en Firebase Auth y en Firestore poné users/UID con role: "admin".</p></div></div></div>
   <div class="modal" id="buyerModal"><div class="modalBox" style="width:min(520px,96vw)"><div class="modalHead"><h3>Datos del comprador</h3><button class="close" onclick="closeModal('buyerModal')">×</button></div><div class="modalContent"><p class="muted">Los números quedarán reservados hasta que el admin confirme el pago.</p><label>Nombre del comprador</label><input class="input" id="buyerName" placeholder="Ej: Juan Pérez"><label>WhatsApp o Instagram</label><input class="input" id="buyerContact" placeholder="Ej: @juanperez o 11 1234-5678"><button class="btn primary" onclick="confirmCheckoutWithBuyer()">Generar reserva y ver pago</button></div></div></div>
   <div class="modal" id="paymentModal"><div class="modalBox"><div class="modalHead"><h3>Pago pendiente</h3><button class="close" onclick="closeModal('paymentModal')">×</button></div><div class="modalContent"><div id="paymentDetails"></div></div></div></div>
   <div class="modal" id="chooseNumbersModal"><div class="modalBox"><div class="modalHead"><h3>Elegí 10 números de la rifa grande</h3><button class="close" onclick="closeModal('chooseNumbersModal')">×</button></div><div class="modalContent"><p class="muted">Esto simula el premio de ganar una mini rifa. Seleccioná exactamente 10 números disponibles.</p><div class="numberBox" id="winnerPickBox"></div><button class="btn primary" onclick="confirmWinnerPick()">Confirmar 10 números</button></div></div></div>
-  <div class="modal" id="adminModal"><div class="modalBox"><div class="modalHead"><h3>Panel de usuario privilegiado</h3><button class="close" onclick="closeModal('adminModal')">×</button></div><div class="modalContent"><div class="tabs"><button class="tab active" onclick="setAdminTab('general',this)">General</button><button class="tab" onclick="setAdminTab('rifasAdmin',this)">Rifas</button><button class="tab" onclick="setAdminTab('winnerAdmin',this)">Ganador rifa</button><button class="tab" onclick="setAdminTab('miniAdmin',this)">Mini rifas</button><button class="tab" onclick="setAdminTab('tiendaAdmin',this)">Tienda</button><button class="tab" onclick="setAdminTab('paymentsAdmin',this)">Pagos</button><button class="tab" onclick="setAdminTab('ganadoresAdmin',this)">Ganadores</button></div>
+  <div class="modal" id="adminModal"><div class="modalBox"><div class="modalHead"><h3>Panel de usuario privilegiado</h3><button class="close" onclick="closeModal('adminModal')">×</button></div><div class="modalContent"><div class="tabs"><button class="tab active" onclick="setAdminTab('general',this)">General</button><button class="tab" onclick="setAdminTab('footerAdmin',this)">Footer</button><button class="tab" onclick="setAdminTab('rifasAdmin',this)">Rifas</button><button class="tab" onclick="setAdminTab('winnerAdmin',this)">Ganador rifa</button><button class="tab" onclick="setAdminTab('miniAdmin',this)">Mini rifas</button><button class="tab" onclick="setAdminTab('tiendaAdmin',this)">Tienda</button><button class="tab" onclick="setAdminTab('paymentsAdmin',this)">Pagos</button><button class="tab" onclick="setAdminTab('ganadoresAdmin',this)">Ganadores</button></div>
     <div class="adminPanel active" id="general"><div class="formGrid"><div><label>Nombre marca</label><input class="input" id="adminBrand"></div><div><label>Badge hero</label><input class="input" id="adminBadge"></div><div><label>Estadística 1</label><input class="input" id="adminStat1"></div><div><label>Estadística 2</label><input class="input" id="adminStat2"></div><div><label>Estadística 3</label><input class="input" id="adminStat3"></div><div><label>Imagen hero URL</label><input class="input" id="adminHeroImg"></div></div><label>Título hero</label><textarea id="adminHeroTitle"></textarea><label>Texto hero</label><textarea id="adminHeroText"></textarea><button class="btn primary" onclick="saveGeneral()">Guardar cambios</button></div>
+    <div class="adminPanel" id="footerAdmin"><p class="muted">Editá todo lo que aparece abajo del todo en la página.</p><div class="formGrid"><div><label>Marca footer</label><input class="input" id="adminFooterBrand"></div><div><label>Título enlaces</label><input class="input" id="adminFooterLinksTitle"></div><div><label>Título legal</label><input class="input" id="adminFooterLegalTitle"></div><div><label>Título contacto</label><input class="input" id="adminFooterContactTitle"></div></div><label>Descripción</label><textarea id="adminFooterDescription"></textarea><label>Enlaces, uno por línea</label><textarea id="adminFooterLinks"></textarea><label>Legal, uno por línea</label><textarea id="adminFooterLegal"></textarea><label>Contacto, uno por línea</label><textarea id="adminFooterContact"></textarea><label>Copyright</label><input class="input" id="adminFooterCopyright"><button class="btn primary" onclick="saveFooter()">Guardar footer</button></div>
     <div class="adminPanel" id="rifasAdmin"><div class="formGrid"><div><label>Nombre rifa</label><input class="input" id="raffleName"></div><div><label>Precio número grande en pesos</label><input class="input" id="rafflePrice" type="number"></div><div><label>Lotería</label><input class="input" id="raffleLottery"></div><div><label>Imagen URL</label><input class="input" id="raffleImg"></div></div><label>Descripción</label><textarea id="raffleDesc"></textarea><button class="btn primary" onclick="addRaffle()">Agregar rifa grande</button><div class="adminList" id="raffleList"></div></div>
     <div class="adminPanel" id="winnerAdmin"><p class="muted">Sistema simple para marcar el ganador de una rifa grande y adjuntar una imagen comprobante del sorteo.</p><div class="formGrid"><div><label>Rifa</label><select id="winnerRaffleSelect" class="input" onchange="loadWinnerForm()"></select></div><div><label>Número ganador</label><select id="winnerNumberSelect" class="input"></select></div><div><label>Nombre del ganador</label><input class="input" id="winnerPersonName" placeholder="Ej: Juan Pérez"></div><div><label>Contacto del ganador</label><input class="input" id="winnerPersonContact" placeholder="Ej: @juanperez / WhatsApp"></div></div><label>Imagen comprobante del sorteo</label><input class="input" id="winnerProofImage" placeholder="Pegá URL de la imagen comprobante"><label>Detalle / aclaración</label><textarea id="winnerProofText" placeholder="Ej: Sorteo realizado por Lotería Nacional, fecha, número ganador, etc."></textarea><button class="btn primary" onclick="saveRaffleWinner()">Guardar ganador</button><button class="btn danger" onclick="clearRaffleWinner()" style="margin-left:8px">Borrar ganador</button><div class="adminList" id="winnerAdminPreview" style="margin-top:16px"></div></div>
     <div class="adminPanel" id="miniAdmin"><p class="muted">Creá mini rifas dentro de una rifa grande. Cada mini va del 0 al 9 y el ganador elige 10 números de la rifa grande.</p><div class="formGrid"><div><label>Rifa grande</label><select id="miniParent" class="input"></select></div><div><label>Nombre mini rifa</label><input class="input" id="miniName"></div><div><label>Precio mini número en pesos</label><input class="input" id="miniPrice" type="number"></div><div><label>Lotería mini rifa</label><input class="input" id="miniLottery"></div></div><button class="btn primary" onclick="addMiniRaffle()">Crear mini rifa</button><div class="adminList" id="miniList"></div></div>
@@ -76,6 +77,7 @@
 
     const defaultSettings = {
       payment:{link:'https://mpago.la/tu-link-de-pago',alias:'PADEL.RIFAS.SN',qr:'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=PADEL.RIFAS.SN',whatsapp:'5491100000000'},
+      footer:{brand:'PADEL RIFAS SN',description:'La forma más emocionante de equiparte con lo mejor del pádel.',linksTitle:'Enlaces',links:['Rifas','Tienda','Ganadores'],legalTitle:'Legal',legal:['Términos','Bases','Privacidad'],contactTitle:'Contacto',contact:['hola@padelrifassn.com','+54 9 11 0000-0000'],copyright:'© 2026 PADEL RIFAS SN.'},
       brand:'PADEL RIFAS SN',badge:'Sorteos Activos Ahora',heroTitle:'Estrenar pala <span>premium nunca fue tan fácil.</span>',heroText:'Participa en nuestras rifas exclusivas y llévate el mejor equipamiento del World Padel Tour por el precio de una caña.',stat1:'+12K',stat2:'340',stat3:'100%',heroImage:'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80',winnerTitle:'Sus historias te van a motivar',winnerText:'Cada ganador se publica con sorteo, número premiado y comprobación de la lotería utilizada.',winnerImage:'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1200&q=80'
     };
 
@@ -149,6 +151,7 @@
     async function logoutUser(){ await signOut(auth); alert('Sesión cerrada.'); }
 
     function render(){
+      site.footer = site.footer || defaultSettings.footer;
       byId('brandName').textContent=site.brand;
       byId('heroBadge').textContent=site.badge;
       byId('heroTitle').innerHTML=site.heroTitle;
@@ -160,7 +163,40 @@
       byId('winnerTitle').textContent=site.winnerTitle;
       byId('winnerText').textContent=site.winnerText;
       byId('winnerImage').src=site.winnerImage;
+      renderFooter();
+      renderAuthButton();
       renderRaffles(); renderProducts(); renderCart(); renderAdmin();
+    }
+
+    function renderFooter(){
+      const f = site.footer || defaultSettings.footer;
+      byId('footerBrand').textContent = f.brand || site.brand || 'PADEL RIFAS SN';
+      byId('footerDescription').textContent = f.description || '';
+      byId('footerLinksTitle').textContent = f.linksTitle || 'Enlaces';
+      byId('footerLinksList').innerHTML = (f.links || []).map(x=>`<li>${x}</li>`).join('');
+      byId('footerLegalTitle').textContent = f.legalTitle || 'Legal';
+      byId('footerLegalList').innerHTML = (f.legal || []).map(x=>`<li>${x}</li>`).join('');
+      byId('footerContactTitle').textContent = f.contactTitle || 'Contacto';
+      byId('footerContactList').innerHTML = (f.contact || []).map(x=>`<li>${x}</li>`).join('');
+      byId('footerCopyright').textContent = f.copyright || '';
+    }
+
+    function renderAuthButton(){
+      const btn = byId('authButton');
+      if(!btn) return;
+      if(currentUser){
+        btn.textContent = isAdmin ? 'Panel' : 'Mi cuenta';
+        btn.classList.add('secondary');
+      }else{
+        btn.textContent = 'Acceder';
+        btn.classList.remove('secondary');
+      }
+    }
+
+    function authButtonClick(){
+      if(!currentUser) return openModal('loginModal');
+      if(isAdmin) return openAdmin();
+      if(confirm('¿Querés cerrar sesión?')) logoutUser();
     }
 
     function pctSold(r){ return Math.round(((r.soldNumbers||[]).length/100)*100); }
@@ -173,7 +209,8 @@
         let nums='';
         for(let n=0;n<=99;n++){
           const sold=(r.soldNumbers||[]).includes(n);
-          const status=sold&&r.soldOwners[n]&&r.soldOwners[n].status==='pending'?'pending':sold?'sold':'';
+          const selected=cart.some(item=>item.key===`big-${r.id}-${n}`);
+          const status=sold&&r.soldOwners[n]&&r.soldOwners[n].status==='pending'?'pending':sold?'sold':selected?'selected':'';
           const owner=sold?ownerText(r.soldOwners[n]):'';
           nums+=`<button class="num ${status}" ${sold?'disabled':''} ${sold?`data-owner="${owner}" title="${owner}"`:''} onclick="selectBigNumber('${r.id}',${n},event)">${String(n).padStart(2,'0')}</button>`;
         }
@@ -182,7 +219,8 @@
           let miniNums='';
           for(let n=0;n<=9;n++){
             const sold=(m.soldNumbers||[]).includes(n);
-            const status=sold&&m.soldOwners[n]&&m.soldOwners[n].status==='pending'?'pending':sold?'sold':'';
+            const selected=cart.some(item=>item.key===`mini-${r.id}-${m.id}-${n}`);
+            const status=sold&&m.soldOwners[n]&&m.soldOwners[n].status==='pending'?'pending':sold?'sold':selected?'selected':'';
             const owner=sold?ownerText(m.soldOwners[n]):'';
             miniNums+=`<button class="num ${status}" ${sold?'disabled':''} ${sold?`data-owner="${owner}" title="${owner}"`:''} onclick="selectMiniNumber('${r.id}','${m.id}',${n},event)">${n}</button>`;
           }
@@ -196,15 +234,15 @@
     function selectBigNumber(raffleId,n,e){
       const r=raffles.find(x=>x.id===raffleId);
       if(!r || (r.soldNumbers||[]).includes(n)) return;
-      e.target.classList.toggle('selected');
-      addCart(`Rifa grande: ${r.name} · Número ${String(n).padStart(2,'0')}`, r.price, {type:'big',raffleId,number:n});
+      const key = `big-${raffleId}-${n}`;
+      toggleCartItem(key, `Rifa grande: ${r.name} · Número ${String(n).padStart(2,'0')}`, r.price, {type:'big',raffleId,number:n}, e.target);
     }
 
     function selectMiniNumber(raffleId,miniId,n,e){
       const r=raffles.find(x=>x.id===raffleId); const m=(r?.miniRaffles||[]).find(x=>x.id===miniId);
       if(!m || (m.soldNumbers||[]).includes(n)) return;
-      e.target.classList.toggle('selected');
-      addCart(`Mini rifa: ${m.name} · Número ${n}`, m.price, {type:'mini',raffleId,miniId,number:n});
+      const key = `mini-${raffleId}-${miniId}-${n}`;
+      toggleCartItem(key, `Mini rifa: ${m.name} · Número ${n}`, m.price, {type:'mini',raffleId,miniId,number:n}, e.target);
     }
 
     function addRandomBig(raffleId){
@@ -216,9 +254,26 @@
       alert('Se agregó el número '+String(n).padStart(2,'0')+' al carrito');
     }
 
-    function addCart(name,price,meta){ cart.push({name,price,meta}); renderCart(); }
+    function addCart(name,price,meta){
+      const key = meta?.type === 'big' ? `big-${meta.raffleId}-${meta.number}` : meta?.type === 'mini' ? `mini-${meta.raffleId}-${meta.miniId}-${meta.number}` : `product-${meta?.productId || name}-${Date.now()}`;
+      if(cart.some(item=>item.key===key)) return;
+      cart.push({key,name,price,meta});
+      renderCart();
+    }
+
+    function toggleCartItem(key,name,price,meta,button){
+      const index = cart.findIndex(item=>item.key===key);
+      if(index >= 0){
+        cart.splice(index,1);
+        if(button) button.classList.remove('selected');
+      }else{
+        cart.push({key,name,price,meta});
+        if(button) button.classList.add('selected');
+      }
+      renderCart();
+    }
     function renderCart(){ byId('cartCount').textContent=cart.length; byId('cartItems').innerHTML=cart.length?cart.map((c,i)=>`<div class="adminItem"><span>${c.name}</span><strong>${money(c.price)}</strong><button class="tab danger" onclick="removeCartItem(${i})">Quitar</button></div>`).join(''):'<p class="muted">Todavía no agregaste nada.</p>'; byId('subtotal').textContent=money(cart.reduce((a,b)=>a+Number(b.price),0)); }
-    function removeCartItem(i){ cart.splice(i,1); renderCart(); }
+    function removeCartItem(i){ cart.splice(i,1); renderCart(); renderRaffles(); }
     function checkout(){ if(!cart.length) return alert('El carrito está vacío'); openModal('buyerModal'); }
 
     async function confirmCheckoutWithBuyer(){
@@ -353,6 +408,11 @@
     function renderAdmin(){
       if(!byId('adminBrand')) return;
       byId('adminBrand').value=site.brand||''; byId('adminBadge').value=site.badge||''; byId('adminHeroTitle').value=site.heroTitle||''; byId('adminHeroText').value=site.heroText||''; byId('adminStat1').value=site.stat1||''; byId('adminStat2').value=site.stat2||''; byId('adminStat3').value=site.stat3||''; byId('adminHeroImg').value=site.heroImage||''; byId('adminWinnerTitle').value=site.winnerTitle||''; byId('adminWinnerText').value=site.winnerText||''; byId('adminWinnerImg').value=site.winnerImage||''; byId('adminPaymentLink').value=(site.payment&&site.payment.link)||''; byId('adminPaymentAlias').value=(site.payment&&site.payment.alias)||''; byId('adminPaymentQR').value=(site.payment&&site.payment.qr)||''; byId('adminPaymentWhatsapp').value=(site.payment&&site.payment.whatsapp)||'';
+      const f=site.footer||defaultSettings.footer;
+      byId('adminFooterBrand').value=f.brand||''; byId('adminFooterDescription').value=f.description||''; byId('adminFooterLinksTitle').value=f.linksTitle||''; byId('adminFooterLinks').value=(f.links||[]).join('
+'); byId('adminFooterLegalTitle').value=f.legalTitle||''; byId('adminFooterLegal').value=(f.legal||[]).join('
+'); byId('adminFooterContactTitle').value=f.contactTitle||''; byId('adminFooterContact').value=(f.contact||[]).join('
+'); byId('adminFooterCopyright').value=f.copyright||'';
       byId('miniParent').innerHTML=raffles.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
       byId('winnerRaffleSelect').innerHTML=raffles.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
       renderPaymentsList(); loadWinnerForm();
@@ -368,6 +428,24 @@
 
     async function showPaymentScreenById(id){ const snap=await getDoc(doc(db,'orders',id)); if(snap.exists()){showPaymentScreen({id:snap.id,...snap.data()}); openModal('paymentModal');} }
     async function savePaymentConfig(){ if(!isAdmin) return alert('Solo admin.'); await updateDoc(settingsRef,{payment:{link:byId('adminPaymentLink').value,alias:byId('adminPaymentAlias').value,qr:byId('adminPaymentQR').value,whatsapp:byId('adminPaymentWhatsapp').value}}); alert('Métodos de pago guardados'); }
+    async function saveFooter(){
+      if(!isAdmin) return alert('Solo admin.');
+      await updateDoc(settingsRef,{footer:{
+        brand:byId('adminFooterBrand').value,
+        description:byId('adminFooterDescription').value,
+        linksTitle:byId('adminFooterLinksTitle').value,
+        links:byId('adminFooterLinks').value.split('
+').map(x=>x.trim()).filter(Boolean),
+        legalTitle:byId('adminFooterLegalTitle').value,
+        legal:byId('adminFooterLegal').value.split('
+').map(x=>x.trim()).filter(Boolean),
+        contactTitle:byId('adminFooterContactTitle').value,
+        contact:byId('adminFooterContact').value.split('
+').map(x=>x.trim()).filter(Boolean),
+        copyright:byId('adminFooterCopyright').value
+      }});
+      alert('Footer guardado');
+    }
     async function markOrderPaid(id){
       if(!isAdmin) return alert('Solo admin.');
       const orderRef = doc(db,'orders',id);
@@ -520,7 +598,7 @@
     function toggleWinnerPick(n){ if(winnerSelected.includes(n)) winnerSelected=winnerSelected.filter(x=>x!==n); else { if(winnerSelected.length>=10) return alert('Solo podés elegir 10 números'); winnerSelected.push(n); } renderWinnerPickBox(); }
     async function confirmWinnerPick(){ if(!isAdmin) return alert('Solo admin.'); if(winnerSelected.length!==10) return alert('Tenés que elegir exactamente 10 números'); const winnerName=prompt('Nombre del ganador de la mini rifa:')||'Ganador mini rifa'; const winnerContact=prompt('Contacto del ganador:')||''; const r=raffles.find(x=>x.id===currentPickRaffleId); const owners={...(r.soldOwners||{})}; winnerSelected.forEach(n=>owners[n]={name:winnerName,contact:winnerContact,status:'paid'}); await updateDoc(doc(db,'raffles',currentPickRaffleId),{soldNumbers:Array.from(new Set([...(r.soldNumbers||[]),...winnerSelected])), soldOwners:owners}); closeModal('chooseNumbersModal'); alert('Se asignaron los 10 números al ganador de la mini rifa'); }
 
-    Object.assign(window,{openModal,closeModal,openAdmin,login,registerUser,logoutUser,selectBigNumber,selectMiniNumber,addRandomBig,removeCartItem,checkout,confirmCheckoutWithBuyer,showPaymentScreenById,setAdminTab,savePaymentConfig,markOrderPaid,deleteOrder,loadWinnerForm,saveRaffleWinner,clearRaffleWinner,saveGeneral,addRaffle,deleteRaffle,addMiniRaffle,deleteMiniRaffle,addProduct,deleteProduct,saveWinner,simulateMiniWinner,toggleWinnerPick,confirmWinnerPick});
+    Object.assign(window,{openModal,closeModal,openAdmin,authButtonClick,login,registerUser,logoutUser,selectBigNumber,selectMiniNumber,addRandomBig,removeCartItem,checkout,confirmCheckoutWithBuyer,showPaymentScreenById,setAdminTab,savePaymentConfig,saveFooter,markOrderPaid,deleteOrder,loadWinnerForm,saveRaffleWinner,clearRaffleWinner,saveGeneral,addRaffle,deleteRaffle,addMiniRaffle,deleteMiniRaffle,addProduct,deleteProduct,saveWinner,simulateMiniWinner,toggleWinnerPick,confirmWinnerPick});
 
     ensureInitialData().then(subscribeData).catch(err=>alert('Error conectando Firebase: '+err.message));
   </script>
