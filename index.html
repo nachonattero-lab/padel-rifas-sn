@@ -27,14 +27,13 @@
   </style>
 </head>
 <body>
-  <header><div class="wrap nav"><a class="brand" href="#top" id="brandName">PADEL RIFAS SN</a><nav><a href="#rifas">Rifas</a><a href="#tienda">Tienda</a><a href="#funciona">Cómo Funciona</a><a href="#ganadores">Ganadores</a><a href="#contacto">Contacto</a></nav><div class="actions"><button class="adminMini" id="adminOpenBtn" onclick="openAdmin()">Panel admin</button><button class="cartBtn" onclick="openModal('cartModal')">🛒 <span id="cartCount">0</span></button><button class="loginBtn" id="authButton" onclick="authButtonClick()">Acceder</button></div></div></header>
+  <header><div class="wrap nav"><a class="brand" href="#top" id="brandName">PADEL RIFAS SN</a><nav><a href="#rifas">Rifas</a><a href="#tienda">Tienda</a><a href="#funciona">Cómo Funciona</a><a href="#ganadores">Ganadores</a></nav><div class="actions"><button class="adminMini" id="adminOpenBtn" onclick="openAdmin()">Panel admin</button><button class="cartBtn" onclick="openModal('cartModal')">🛒 <span id="cartCount">0</span></button><button class="loginBtn" id="authButton" type="button">Acceder</button></div></div></header>
   <main id="top">
     <section class="hero"><div class="wrap heroGrid"><div><div class="eyebrow" id="heroBadge">Sorteos Activos Ahora</div><h1 id="heroTitle">Estrenar pala <span>premium nunca fue tan fácil.</span></h1><p id="heroText">Participa en nuestras rifas exclusivas y llévate el mejor equipamiento del World Padel Tour por el precio de una caña.</p><div class="heroBtns"><a class="btn primary" href="#rifas">Ver Rifas Activas</a><a class="btn secondary" href="#tienda">Explorar Tienda</a></div><div class="stats"><div class="stat"><strong id="stat1">+12K</strong><small>Participantes</small></div><div class="stat"><strong id="stat2">340</strong><small>Ganadores</small></div><div class="stat"><strong id="stat3">100%</strong><small>Transparencia</small></div></div></div><div class="smash glass"><img id="heroImage" alt="Smash" src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80"></div></div></section>
     <section id="rifas"><div class="wrap"><div class="sectionHead"><div class="label">Rifas Activas</div><h2>Tu próximo premio te espera</h2><p>La rifa grande va del 00 al 99. Las mini rifas van del 0 al 9: el ganador elige 10 números de la rifa grande.</p></div><div class="grid" id="rafflesGrid"></div></div></section>
     <section id="funciona"><div class="wrap"><div class="sectionHead"><div class="label">Cómo Funciona</div><h2>El camino al premio</h2></div><div class="grid steps"><div class="step glass"><div class="stepNum">01</div><h3>Elegí números</h3><p class="muted">Comprá números de la rifa grande o participá en una mini rifa.</p></div><div class="step glass"><div class="stepNum">02</div><h3>Ganás una mini</h3><p class="muted">Si tu número sale en la mini rifa, podés elegir 10 números de la rifa grande.</p></div><div class="step glass"><div class="stepNum">03</div><h3>Esperá el sorteo final</h3><p class="muted">El ganador final se define según la lotería configurada.</p></div></div></div></section>
     <section id="tienda"><div class="wrap"><div class="sectionHead"><div class="label">Tienda Premium</div><h2>Equípate como un pro</h2></div><div class="grid" id="shopGrid"></div></div></section>
     <section id="ganadores"><div class="wrap winner"><div class="winnerImg glass"><img id="winnerImage" src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1200&q=80" alt="Ganador"></div><div><span class="verified">SORTEO VERIFICADO</span><div class="label">Ganadores Reales</div><h2 class="quote" id="winnerTitle">Sus historias te van a motivar</h2><p class="muted" id="winnerText" style="margin-top:18px">Cada ganador se publica con sorteo, número premiado y comprobación de la lotería utilizada.</p></div></div></section>
-    <section id="contacto"><div class="wrap"><div class="contactBox glass"><h2>¿Necesitás ayuda?</h2><p class="muted" style="max-width:680px;margin:14px auto 24px">Nuestro asistente resuelve tus dudas al instante.</p><button class="btn primary" onclick="alert('Abrir chat o WhatsApp')">Chatear ahora</button></div></div></section>
   </main>
   <footer class="footer"><div class="wrap"><div class="footerGrid"><div><h3 id="footerBrand">PADEL RIFAS SN</h3><p class="muted" id="footerDescription">La forma más emocionante de equiparte con lo mejor del pádel.</p></div><div><h4 id="footerLinksTitle">Enlaces</h4><ul id="footerLinksList"><li>Rifas</li><li>Tienda</li><li>Ganadores</li></ul></div><div><h4 id="footerLegalTitle">Legal</h4><ul id="footerLegalList"><li>Términos</li><li>Bases</li><li>Privacidad</li></ul></div><div><h4 id="footerContactTitle">Contacto</h4><ul id="footerContactList"><li>hola@padelrifassn.com</li><li>+54 9 11 0000-0000</li></ul></div></div><p class="copyright" id="footerCopyright">© 2026 PADEL RIFAS SN.</p></div></footer>
   
@@ -184,19 +183,24 @@
     function renderAuthButton(){
       const btn = byId('authButton');
       if(!btn) return;
-      if(currentUser){
-        btn.textContent = isAdmin ? 'Panel' : 'Mi cuenta';
-        btn.classList.add('secondary');
-      }else{
-        btn.textContent = 'Acceder';
-        btn.classList.remove('secondary');
-      }
-    }
 
-    function authButtonClick(){
-      if(!currentUser) return openModal('loginModal');
-      if(isAdmin) return openAdmin();
-      if(confirm('¿Querés cerrar sesión?')) logoutUser();
+      if(currentUser && isAdmin){
+        btn.textContent = 'Panel';
+        btn.classList.add('secondary');
+        btn.onclick = () => openAdmin();
+        return;
+      }
+
+      if(currentUser){
+        btn.textContent = 'Cerrar sesión';
+        btn.classList.add('secondary');
+        btn.onclick = () => logoutUser();
+        return;
+      }
+
+      btn.textContent = 'Acceder';
+      btn.classList.remove('secondary');
+      btn.onclick = () => openModal('loginModal');
     }
 
     function pctSold(r){ return Math.round(((r.soldNumbers||[]).length/100)*100); }
@@ -598,7 +602,7 @@
     function toggleWinnerPick(n){ if(winnerSelected.includes(n)) winnerSelected=winnerSelected.filter(x=>x!==n); else { if(winnerSelected.length>=10) return alert('Solo podés elegir 10 números'); winnerSelected.push(n); } renderWinnerPickBox(); }
     async function confirmWinnerPick(){ if(!isAdmin) return alert('Solo admin.'); if(winnerSelected.length!==10) return alert('Tenés que elegir exactamente 10 números'); const winnerName=prompt('Nombre del ganador de la mini rifa:')||'Ganador mini rifa'; const winnerContact=prompt('Contacto del ganador:')||''; const r=raffles.find(x=>x.id===currentPickRaffleId); const owners={...(r.soldOwners||{})}; winnerSelected.forEach(n=>owners[n]={name:winnerName,contact:winnerContact,status:'paid'}); await updateDoc(doc(db,'raffles',currentPickRaffleId),{soldNumbers:Array.from(new Set([...(r.soldNumbers||[]),...winnerSelected])), soldOwners:owners}); closeModal('chooseNumbersModal'); alert('Se asignaron los 10 números al ganador de la mini rifa'); }
 
-    Object.assign(window,{openModal,closeModal,openAdmin,authButtonClick,login,registerUser,logoutUser,selectBigNumber,selectMiniNumber,addRandomBig,removeCartItem,checkout,confirmCheckoutWithBuyer,showPaymentScreenById,setAdminTab,savePaymentConfig,saveFooter,markOrderPaid,deleteOrder,loadWinnerForm,saveRaffleWinner,clearRaffleWinner,saveGeneral,addRaffle,deleteRaffle,addMiniRaffle,deleteMiniRaffle,addProduct,deleteProduct,saveWinner,simulateMiniWinner,toggleWinnerPick,confirmWinnerPick});
+    Object.assign(window,{openModal,closeModal,openAdmin,login,registerUser,logoutUser,selectBigNumber,selectMiniNumber,addRandomBig,removeCartItem,checkout,confirmCheckoutWithBuyer,showPaymentScreenById,setAdminTab,savePaymentConfig,saveFooter,markOrderPaid,deleteOrder,loadWinnerForm,saveRaffleWinner,clearRaffleWinner,saveGeneral,addRaffle,deleteRaffle,addMiniRaffle,deleteMiniRaffle,addProduct,deleteProduct,saveWinner,simulateMiniWinner,toggleWinnerPick,confirmWinnerPick});
 
     ensureInitialData().then(subscribeData).catch(err=>alert('Error conectando Firebase: '+err.message));
   </script>
